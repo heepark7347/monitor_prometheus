@@ -26,3 +26,11 @@ scripts/k8s-install/join-tokens/
 # kubeconfig (보안)
 *.kubeconfig
 admin.conf
+.kube/
+.git-credentials
+
+# 바이너리
+bin/
+
+# VM 사이드 스크립트 사본
+k8s-install/
