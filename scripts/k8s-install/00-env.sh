@@ -14,7 +14,7 @@ export KUBEADM_K8S_VERSION="v1.30.0"          # kubeadm init 에 전달할 버�
 export CONTAINERD_VERSION="1.7.22-1"          # apt containerd.io 패키지 버전
 
 # ── 네트워크 ──────────────────────────────────────────────────────────────────
-export CONTROL_PLANE_VIP="10.10.120.229"      # keepalived VIP (API 서버 LB 주소)
+export CONTROL_PLANE_VIP="10.10.120.220"      # keepalived VIP (API 서버 LB 주소)
 export CONTROL_PLANE_PORT="6443"              # k8s API 서버 포트
 export POD_CIDR="192.168.0.0/16"             # Calico 기본 Pod CIDR
 export SERVICE_CIDR="10.96.0.0/12"           # kube-proxy 서비스 CIDR

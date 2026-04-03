@@ -16,7 +16,7 @@
 | 1.2 | HAProxy/keepalived 설정 | ✅ | feat(k8s): 클러스터 설치 스크립트 | configs/haproxy/, configs/keepalived/ |
 | 1.3 | kubeadm init 설정 | ✅ | feat(k8s): 클러스터 설치 스크립트 | configs/kubeadm/kubeadm-init.yaml |
 | 1.4 | 전 노드 공통 설치 실행 | ✅ | — | 01-common.sh 5대 실행 완료 (2026-04-03) |
-| 1.5 | HAProxy/keepalived 배포 | ✅ | — | VIP 10.10.120.229 활성화 확인 (enX0) |
+| 1.5 | HAProxy/keepalived 배포 | ✅ | — | VIP 10.10.120.220 활성화 확인 (enX0) |
 | 1.6 | master1 초기화 | ✅ | — | kubeadm init 성공 (2026-04-03) |
 | 1.7 | Calico CNI 설치 | ✅ | — | v3.28.0 Tigera Operator 방식 |
 | 1.8 | master2/3 CP 조인 | ✅ | — | control-plane 노드 3대 Ready |

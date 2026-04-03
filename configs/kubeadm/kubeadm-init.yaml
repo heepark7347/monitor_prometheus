@@ -10,7 +10,7 @@ kubernetesVersion: v1.30.0
 
 # HA: controlPlaneEndpoint 는 keepalived VIP:포트
 # 이 주소로 kubeconfig 및 인증서 SAN 이 생성된다
-controlPlaneEndpoint: "10.10.120.229:6443"
+controlPlaneEndpoint: "10.10.120.220:6443"
 
 # etcd: 내장 etcd 사용 (external etcd 는 별도 구성 시 변경)
 etcd:
@@ -24,7 +24,7 @@ networking:
 # API 서버 추가 SAN: VIP, 노드 IP, 도메인 모두 포함
 apiServer:
   certSANs:
-    - "10.10.120.229"   # VIP
+    - "10.10.120.220"   # VIP
     - "10.10.120.232"   # master1
     - "10.10.120.233"   # master2
     - "10.10.120.234"   # master3

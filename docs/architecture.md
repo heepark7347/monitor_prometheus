@@ -11,7 +11,7 @@
 외부 트래픽
      │
      ▼
-keepalived VIP: 10.10.120.229
+keepalived VIP: 10.10.120.220
      │
      ├─── proxy1 (10.10.120.230) ── HAProxy → API 6443
      └─── proxy2 (10.10.120.231) ── HAProxy → API 6443 (BACKUP)
@@ -24,7 +24,7 @@ keepalived VIP: 10.10.120.229
 
 | 구성요소 | 값 |
 |----------|----|
-| Control Plane VIP | 10.10.120.229 |
+| Control Plane VIP | 10.10.120.220 |
 | API 서버 포트 | 6443 |
 | Pod CIDR | 192.168.0.0/16 |
 | Service CIDR | 10.96.0.0/12 |
@@ -46,7 +46,7 @@ keepalived VIP: 10.10.120.229
 
 ### Control Plane HA
 - kubeadm stacked etcd: etcd 가 각 master 에 내장
-- HAProxy(proxy1/2) → VIP(10.10.120.229) → master1/2/3:6443 라운드로빈
+- HAProxy(proxy1/2) → VIP(10.10.120.220) → master1/2/3:6443 라운드로빈
 - keepalived VRRP: proxy1 MASTER(priority 101), proxy2 BACKUP(priority 100)
 
 ### 워크로드 분산
