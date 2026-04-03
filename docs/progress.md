@@ -24,6 +24,7 @@
 | 1.10 | 노드 레이블/테인트 | ✅ | — | zone 레이블 + node-type 레이블 적용 |
 | 1.11 | monitoring namespace | ✅ | — | namespace/monitoring 생성 완료 |
 | 1.12 | Helm v3 설치 | ✅ | — | helm v3.20.1 (master1 /usr/local/bin) |
+| 1.13 | Control Plane VIP 변경 적용 | ✅ | fix(infra): VIP 변경 | API 서버 인증서 재발급 + kubelet.conf 전 노드 업데이트 |
 
 ### 클러스터 최종 상태 (2026-04-03)
 
