@@ -19,3 +19,10 @@
 # Claude 내부 파일
 .claude.json
 .claude/
+
+# Kubernetes join 토큰 (보안 — 절대 커밋 금지)
+scripts/k8s-install/join-tokens/
+
+# kubeconfig (보안)
+*.kubeconfig
+admin.conf

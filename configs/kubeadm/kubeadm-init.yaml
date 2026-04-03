@@ -1,0 +1,72 @@
+# =============================================================================
+# kubeadm-init.yaml — kubeadm 초기화 설정
+# 사용 위치: k8s-master1 에서 kubeadm init --config 로 사용
+# =============================================================================
+
+# ── ClusterConfiguration ─────────────────────────────────────────────────────
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: v1.30.0
+
+# HA: controlPlaneEndpoint 는 keepalived VIP:포트
+# 이 주소로 kubeconfig 및 인증서 SAN 이 생성된다
+controlPlaneEndpoint: "10.10.120.229:6443"
+
+# etcd: 내장 etcd 사용 (external etcd 는 별도 구성 시 변경)
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+
+networking:
+  podSubnet:     "192.168.0.0/16"   # Calico 기본 CIDR
+  serviceSubnet: "10.96.0.0/12"
+
+# API 서버 추가 SAN: VIP, 노드 IP, 도메인 모두 포함
+apiServer:
+  certSANs:
+    - "10.10.120.229"   # VIP
+    - "10.10.120.232"   # master1
+    - "10.10.120.233"   # master2
+    - "10.10.120.234"   # master3
+    - "k8s-api"
+    - "k8s-master1"
+    - "k8s-master2"
+    - "k8s-master3"
+    - "localhost"
+    - "127.0.0.1"
+  extraArgs:
+    # 감사 로그 활성화
+    audit-log-path: /var/log/kubernetes/audit.log
+    audit-log-maxage: "30"
+    audit-log-maxbackup: "10"
+    audit-log-maxsize: "100"
+
+# 컨트롤러 매니저 설정
+controllerManager:
+  extraArgs:
+    bind-address: "0.0.0.0"          # Prometheus 메트릭 수집용
+
+# 스케줄러 설정
+scheduler:
+  extraArgs:
+    bind-address: "0.0.0.0"          # Prometheus 메트릭 수집용
+
+---
+# ── KubeletConfiguration ─────────────────────────────────────────────────────
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+
+# systemd cgroup 드라이버 (containerd 설정과 반드시 일치)
+cgroupDriver: systemd
+
+# 컨테이너 로그 순환
+containerLogMaxFiles: 5
+containerLogMaxSize: 10Mi
+
+---
+# ── KubeProxyConfiguration ───────────────────────────────────────────────────
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+
+# ipvs 모드: iptables 보다 성능 우수, ipvsadm 패키지 필요
+mode: ipvs
