@@ -1,0 +1,31 @@
+[sudo] password for psh: === [05-worker-join] 시작: proxy1 ===
+--- [1/2] join 명령어 확인
+
+k8s-master1 에서 아래 명령으로 워커 join 명령을 확인하세요:
+  kubeadm token create --print-join-command
+
+토큰이 만료된 경우 위 명령으로 재발급 가능합니다.
+
+--- [2/2] 워커 노드 조인
+[preflight] Running pre-flight checks
+[preflight] Reading configuration from the cluster...
+[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Starting the kubelet
+[kubelet-check] Waiting for a healthy kubelet. This can take up to 4m0s
+[kubelet-check] The kubelet is healthy after 1.001570761s
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+=== [05-worker-join] 완료: proxy1 ===
+
+k8s-master1 에서 노드 상태 확인:
+  kubectl get nodes -o wide
+
+다음 단계: k8s-master1 에서 07-label-taint.sh 실행 (모든 노드 조인 후)

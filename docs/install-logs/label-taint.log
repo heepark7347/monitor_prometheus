@@ -1,0 +1,46 @@
+=== [07-label-taint] 시작 ===
+--- [1/4] 현재 노드 목록
+NAME          STATUS   ROLES           AGE    VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
+k8s-master1   Ready    control-plane   4m4s   v1.30.0   10.10.120.232   <none>        Ubuntu 24.04.1 LTS   6.8.0-41-generic   containerd://1.7.22
+k8s-master2   Ready    control-plane   84s    v1.30.0   10.10.120.233   <none>        Ubuntu 24.04.1 LTS   6.8.0-41-generic   containerd://1.7.22
+k8s-master3   Ready    control-plane   81s    v1.30.0   10.10.120.234   <none>        Ubuntu 24.04.1 LTS   6.8.0-41-generic   containerd://1.7.22
+proxy1        Ready    <none>          65s    v1.30.0   10.10.120.230   <none>        Ubuntu 24.04.1 LTS   6.8.0-41-generic   containerd://1.7.22
+proxy2        Ready    <none>          64s    v1.30.0   10.10.120.231   <none>        Ubuntu 24.04.1 LTS   6.8.0-41-generic   containerd://1.7.22
+
+--- [2/4] 역할 레이블 추가
+node/k8s-master1 labeled
+node/k8s-master2 labeled
+node/k8s-master3 labeled
+node/proxy1 labeled
+node/proxy2 labeled
+--- [3/4] zone 레이블 설정
+node/k8s-master1 labeled
+node/k8s-master2 labeled
+node/k8s-master3 labeled
+node/proxy1 labeled
+node/proxy2 labeled
+--- [4/4] proxy 노드 전용 레이블
+node/proxy1 labeled
+node/proxy2 labeled
+
+=== 현재 노드 테인트 확인 ===
+NAME          TAINTS
+k8s-master1   node-role.kubernetes.io/control-plane
+k8s-master2   node-role.kubernetes.io/control-plane
+k8s-master3   node-role.kubernetes.io/control-plane
+proxy1        <none>
+proxy2        <none>
+
+=== 최종 노드 레이블 확인 ===
+NAME          STATUS   ROLES                  AGE    VERSION   LABELS
+k8s-master1   Ready    control-plane,worker   4m6s   v1.30.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master1,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/worker=,node-type=master,node.kubernetes.io/exclude-from-external-load-balancers=,topology.kubernetes.io/zone=zone-a
+k8s-master2   Ready    control-plane,worker   86s    v1.30.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master2,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/worker=,node-type=master,node.kubernetes.io/exclude-from-external-load-balancers=,topology.kubernetes.io/zone=zone-b
+k8s-master3   Ready    control-plane,worker   83s    v1.30.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master3,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node-role.kubernetes.io/worker=,node-type=master,node.kubernetes.io/exclude-from-external-load-balancers=,topology.kubernetes.io/zone=zone-c
+proxy1        Ready    worker                 67s    v1.30.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=proxy1,kubernetes.io/os=linux,node-role.kubernetes.io/worker=,node-type=proxy,role=ingress-proxy,topology.kubernetes.io/zone=zone-proxy-a
+proxy2        Ready    worker                 66s    v1.30.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=proxy2,kubernetes.io/os=linux,node-role.kubernetes.io/worker=,node-type=proxy,role=ingress-proxy,topology.kubernetes.io/zone=zone-proxy-b
+
+=== [07-label-taint] 완료 ===
+
+다음 단계:
+  - monitoring namespace 생성: kubectl create namespace monitoring
+  - helm chart 배포: helm/values/ 파일 참조

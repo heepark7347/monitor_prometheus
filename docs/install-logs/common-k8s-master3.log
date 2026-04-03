@@ -1,0 +1,518 @@
+[sudo] password for psh: === [01-common] 시작: k8s-master3 ===
+--- [1/8] 스왑 비활성화
+--- [2/8] 커널 모듈 설정
+--- [3/8] sysctl 설정
+* Applying /usr/lib/sysctl.d/10-apparmor.conf ...
+* Applying /etc/sysctl.d/10-console-messages.conf ...
+* Applying /etc/sysctl.d/10-ipv6-privacy.conf ...
+* Applying /etc/sysctl.d/10-kernel-hardening.conf ...
+* Applying /etc/sysctl.d/10-magic-sysrq.conf ...
+* Applying /etc/sysctl.d/10-map-count.conf ...
+* Applying /etc/sysctl.d/10-network-security.conf ...
+* Applying /etc/sysctl.d/10-ptrace.conf ...
+* Applying /etc/sysctl.d/10-zeropage.conf ...
+* Applying /usr/lib/sysctl.d/50-pid-max.conf ...
+* Applying /usr/lib/sysctl.d/99-protect-links.conf ...
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.d/k8s.conf ...
+* Applying /etc/sysctl.conf ...
+kernel.apparmor_restrict_unprivileged_userns = 1
+kernel.printk = 4 4 1 7
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2
+kernel.kptr_restrict = 1
+kernel.sysrq = 176
+vm.max_map_count = 1048576
+net.ipv4.conf.default.rp_filter = 2
+net.ipv4.conf.all.rp_filter = 2
+kernel.yama.ptrace_scope = 1
+vm.mmap_min_addr = 65536
+kernel.pid_max = 4194304
+fs.protected_fifos = 1
+fs.protected_hardlinks = 1
+fs.protected_regular = 2
+fs.protected_symlinks = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+--- [4/8] apt 사전 패키지 설치
+Hit:1 https://deb.nodesource.com/node_22.x nodistro InRelease
+Get:2 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Hit:3 http://archive.ubuntu.com/ubuntu noble InRelease
+Get:4 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:5 http://security.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [22.8 kB]
+Hit:6 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Get:7 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1,875 kB]
+Get:8 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1,663 kB]
+Fetched 3,813 kB in 4s (885 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+apt-transport-https is already the newest version (2.8.3).
+ca-certificates is already the newest version (20240203).
+curl is already the newest version (8.5.0-2ubuntu10.8).
+curl set to manually installed.
+gnupg is already the newest version (2.4.4-2ubuntu17.4).
+gnupg set to manually installed.
+lsb-release is already the newest version (12.0-2).
+lsb-release set to manually installed.
+The following packages were automatically installed and are no longer required:
+  gyp handlebars javascript-common libcares2 libdrm-amdgpu1 libdrm-intel1
+  libegl-mesa0 libegl1 libfile-basedir-perl libfile-desktopentry-perl
+  libfile-mimeinfo-perl libgbm1 libgl1 libgl1-mesa-dri libgles2 libglvnd0
+  libglx-mesa0 libglx0 libice6 libio-stringy-perl libipc-system-simple-perl
+  libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify
+  libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm20 libnet-dbus-perl libpciaccess0
+  libre2-10 libsm6 libssl-dev libtie-ixhash-perl libuv1-dev libvulkan1
+  libwayland-client0 libx11-protocol-perl libx11-xcb1 libxaw7 libxcb-dri3-0
+  libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0
+  libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2
+  libxi6 libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl
+  libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1
+  libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes
+  node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet
+  node-argparse node-arrify node-async node-async-each node-auto-bind
+  node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match
+  node-base64-js node-binary-extensions node-brace-expansion node-busboy
+  node-camelcase node-caniuse-lite node-chownr node-chrome-trace-event
+  node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone
+  node-clone-deep node-collection-visit node-color-convert node-color-name
+  node-colors node-commander node-commondir node-concat-stream
+  node-console-control-strings node-convert-source-map node-core-js
+  node-core-js-pure node-core-util-is node-data-uri-to-buffer
+  node-decompress-response node-deep-is node-defaults node-define-property
+  node-delegates node-depd node-diff node-electron-to-chromium node-encoding
+  node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys
+  node-esquery node-estraverse node-esutils node-events node-fancy-log
+  node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child
+  node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath
+  node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got
+  node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value
+  node-has-values node-hosted-git-info node-iconv-lite node-ieee754 node-iferr
+  node-imurmurhash node-indent-string node-inflight node-inherits node-ini
+  node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path
+  node-is-buffer node-is-descriptor node-is-extendable node-is-extglob
+  node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream
+  node-is-typedarray node-is-windows node-isarray node-isexe node-isobject
+  node-js-tokens node-jsesc node-json-buffer node-json-parse-better-errors
+  node-json-schema node-json-schema-traverse node-json-stable-stringify
+  node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner
+  node-locate-path node-lodash-packages node-log-driver node-lowercase-keys
+  node-lru-cache node-map-visit node-memfs node-merge-stream
+  node-mimic-response node-minimatch node-minimist node-minipass
+  node-mixin-deep node-mute-stream node-n3 node-negotiator node-neo-async
+  node-npm-run-path node-object-inspect node-object-visit node-once
+  node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists
+  node-path-is-absolute node-path-is-inside node-path-type node-pify
+  node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry
+  node-promzard node-prr node-pump node-punycode node-quick-lru
+  node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime
+  node-regenerator-transform node-regexpp node-regjsgen node-repeat-string
+  node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer
+  node-retry node-run-queue node-safe-buffer node-sellside-emitter
+  node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit
+  node-slash node-slice-ansi node-source-list-map node-source-map
+  node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri
+  node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments
+  node-supports-color node-tapable node-terser node-text-table node-through
+  node-time-stamp node-to-fast-properties node-tslib node-type-check
+  node-typedarray node-typedarray-to-buffer node-undici
+  node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript
+  node-unicode-property-aliases-ecmascript node-unique-filename
+  node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources
+  node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n
+  node-yallist node-yaml nodejs x11-common x11-utils x11-xserver-utils
+  xdg-utils zutty
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  libipset13
+Suggested packages:
+  heartbeat keepalived ldirectord
+The following NEW packages will be installed:
+  conntrack ipset ipvsadm libipset13 socat
+0 upgraded, 5 newly installed, 0 to remove and 272 not upgraded.
+Need to get 546 kB of archives.
+After this operation, 2,267 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble/main amd64 conntrack amd64 1:1.4.8-1ubuntu1 [37.9 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble/main amd64 libipset13 amd64 7.19-1ubuntu2 [61.5 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 ipset amd64 7.19-1ubuntu2 [32.6 kB]
+Get:4 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 ipvsadm amd64 1:1.31-1ubuntu0.1 [40.3 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble/main amd64 socat amd64 1.8.0.0-4build3 [374 kB]
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Fetched 546 kB in 3s (179 kB/s)
+Selecting previously unselected package conntrack.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 108256 files and directories currently installed.)
+Preparing to unpack .../conntrack_1%3a1.4.8-1ubuntu1_amd64.deb ...
+Unpacking conntrack (1:1.4.8-1ubuntu1) ...
+Selecting previously unselected package libipset13:amd64.
+Preparing to unpack .../libipset13_7.19-1ubuntu2_amd64.deb ...
+Unpacking libipset13:amd64 (7.19-1ubuntu2) ...
+Selecting previously unselected package ipset.
+Preparing to unpack .../ipset_7.19-1ubuntu2_amd64.deb ...
+Unpacking ipset (7.19-1ubuntu2) ...
+Selecting previously unselected package ipvsadm.
+Preparing to unpack .../ipvsadm_1%3a1.31-1ubuntu0.1_amd64.deb ...
+Unpacking ipvsadm (1:1.31-1ubuntu0.1) ...
+Selecting previously unselected package socat.
+Preparing to unpack .../socat_1.8.0.0-4build3_amd64.deb ...
+Unpacking socat (1.8.0.0-4build3) ...
+Setting up ipvsadm (1:1.31-1ubuntu0.1) ...
+Setting up conntrack (1:1.4.8-1ubuntu1) ...
+Setting up socat (1.8.0.0-4build3) ...
+Setting up libipset13:amd64 (7.19-1ubuntu2) ...
+Setting up ipset (7.19-1ubuntu2) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.3) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ psh @ session #18: sshd[1463]
+ psh @ user manager service: systemd[1039]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+--- [5/8] containerd 설치
+Get:1 https://download.docker.com/linux/ubuntu noble InRelease [48.5 kB]
+Hit:2 https://deb.nodesource.com/node_22.x nodistro InRelease
+Get:3 https://download.docker.com/linux/ubuntu noble/stable amd64 Packages [48.7 kB]
+Hit:4 http://security.ubuntu.com/ubuntu noble-security InRelease
+Hit:5 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:6 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:7 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Fetched 97.2 kB in 1s (94.1 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  gyp handlebars javascript-common libcares2 libdrm-amdgpu1 libdrm-intel1
+  libegl-mesa0 libegl1 libfile-basedir-perl libfile-desktopentry-perl
+  libfile-mimeinfo-perl libgbm1 libgl1 libgl1-mesa-dri libgles2 libglvnd0
+  libglx-mesa0 libglx0 libice6 libio-stringy-perl libipc-system-simple-perl
+  libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify
+  libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm20 libnet-dbus-perl libpciaccess0
+  libre2-10 libsm6 libssl-dev libtie-ixhash-perl libuv1-dev libvulkan1
+  libwayland-client0 libx11-protocol-perl libx11-xcb1 libxaw7 libxcb-dri3-0
+  libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0
+  libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2
+  libxi6 libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl
+  libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1
+  libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes
+  node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet
+  node-argparse node-arrify node-async node-async-each node-auto-bind
+  node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match
+  node-base64-js node-binary-extensions node-brace-expansion node-busboy
+  node-camelcase node-caniuse-lite node-chownr node-chrome-trace-event
+  node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone
+  node-clone-deep node-collection-visit node-color-convert node-color-name
+  node-colors node-commander node-commondir node-concat-stream
+  node-console-control-strings node-convert-source-map node-core-js
+  node-core-js-pure node-core-util-is node-data-uri-to-buffer
+  node-decompress-response node-deep-is node-defaults node-define-property
+  node-delegates node-depd node-diff node-electron-to-chromium node-encoding
+  node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys
+  node-esquery node-estraverse node-esutils node-events node-fancy-log
+  node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child
+  node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath
+  node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got
+  node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value
+  node-has-values node-hosted-git-info node-iconv-lite node-ieee754 node-iferr
+  node-imurmurhash node-indent-string node-inflight node-inherits node-ini
+  node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path
+  node-is-buffer node-is-descriptor node-is-extendable node-is-extglob
+  node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream
+  node-is-typedarray node-is-windows node-isarray node-isexe node-isobject
+  node-js-tokens node-jsesc node-json-buffer node-json-parse-better-errors
+  node-json-schema node-json-schema-traverse node-json-stable-stringify
+  node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner
+  node-locate-path node-lodash-packages node-log-driver node-lowercase-keys
+  node-lru-cache node-map-visit node-memfs node-merge-stream
+  node-mimic-response node-minimatch node-minimist node-minipass
+  node-mixin-deep node-mute-stream node-n3 node-negotiator node-neo-async
+  node-npm-run-path node-object-inspect node-object-visit node-once
+  node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists
+  node-path-is-absolute node-path-is-inside node-path-type node-pify
+  node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry
+  node-promzard node-prr node-pump node-punycode node-quick-lru
+  node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime
+  node-regenerator-transform node-regexpp node-regjsgen node-repeat-string
+  node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer
+  node-retry node-run-queue node-safe-buffer node-sellside-emitter
+  node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit
+  node-slash node-slice-ansi node-source-list-map node-source-map
+  node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri
+  node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments
+  node-supports-color node-tapable node-terser node-text-table node-through
+  node-time-stamp node-to-fast-properties node-tslib node-type-check
+  node-typedarray node-typedarray-to-buffer node-undici
+  node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript
+  node-unicode-property-aliases-ecmascript node-unique-filename
+  node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources
+  node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n
+  node-yallist node-yaml nodejs x11-common x11-utils x11-xserver-utils
+  xdg-utils zutty
+Use 'sudo apt autoremove' to remove them.
+The following NEW packages will be installed:
+  containerd.io
+0 upgraded, 1 newly installed, 0 to remove and 272 not upgraded.
+Need to get 29.5 MB of archives.
+After this operation, 121 MB of additional disk space will be used.
+Get:1 https://download.docker.com/linux/ubuntu noble/stable amd64 containerd.io amd64 1.7.22-1 [29.5 MB]
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Fetched 29.5 MB in 0s (75.6 MB/s)
+Selecting previously unselected package containerd.io.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 108333 files and directories currently installed.)
+Preparing to unpack .../containerd.io_1.7.22-1_amd64.deb ...
+Unpacking containerd.io (1.7.22-1) ...
+Setting up containerd.io (1.7.22-1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/containerd.service → /usr/lib/systemd/system/containerd.service.
+Processing triggers for man-db (2.12.0-4build2) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ psh @ session #18: sshd[1463]
+ psh @ user manager service: systemd[1039]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+--- [6/8] kubeadm / kubelet / kubectl 설치 (v1.30)
+Hit:1 https://download.docker.com/linux/ubuntu noble InRelease
+Hit:2 https://deb.nodesource.com/node_22.x nodistro InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu noble InRelease
+Get:3 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  InRelease [1,192 B]
+Get:5 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  Packages [20.3 kB]
+Hit:6 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:7 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Hit:8 http://security.ubuntu.com/ubuntu noble-security InRelease
+Fetched 21.5 kB in 2s (13.6 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  gyp handlebars javascript-common libcares2 libdrm-amdgpu1 libdrm-intel1
+  libegl-mesa0 libegl1 libfile-basedir-perl libfile-desktopentry-perl
+  libfile-mimeinfo-perl libgbm1 libgl1 libgl1-mesa-dri libgles2 libglvnd0
+  libglx-mesa0 libglx0 libice6 libio-stringy-perl libipc-system-simple-perl
+  libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify
+  libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm20 libnet-dbus-perl libpciaccess0
+  libre2-10 libsm6 libssl-dev libtie-ixhash-perl libuv1-dev libvulkan1
+  libwayland-client0 libx11-protocol-perl libx11-xcb1 libxaw7 libxcb-dri3-0
+  libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0
+  libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2
+  libxi6 libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl
+  libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1
+  libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes
+  node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet
+  node-argparse node-arrify node-async node-async-each node-auto-bind
+  node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match
+  node-base64-js node-binary-extensions node-brace-expansion node-busboy
+  node-camelcase node-caniuse-lite node-chownr node-chrome-trace-event
+  node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone
+  node-clone-deep node-collection-visit node-color-convert node-color-name
+  node-colors node-commander node-commondir node-concat-stream
+  node-console-control-strings node-convert-source-map node-core-js
+  node-core-js-pure node-core-util-is node-data-uri-to-buffer
+  node-decompress-response node-deep-is node-defaults node-define-property
+  node-delegates node-depd node-diff node-electron-to-chromium node-encoding
+  node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys
+  node-esquery node-estraverse node-esutils node-events node-fancy-log
+  node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child
+  node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath
+  node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got
+  node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value
+  node-has-values node-hosted-git-info node-iconv-lite node-ieee754 node-iferr
+  node-imurmurhash node-indent-string node-inflight node-inherits node-ini
+  node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path
+  node-is-buffer node-is-descriptor node-is-extendable node-is-extglob
+  node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream
+  node-is-typedarray node-is-windows node-isarray node-isexe node-isobject
+  node-js-tokens node-jsesc node-json-buffer node-json-parse-better-errors
+  node-json-schema node-json-schema-traverse node-json-stable-stringify
+  node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner
+  node-locate-path node-lodash-packages node-log-driver node-lowercase-keys
+  node-lru-cache node-map-visit node-memfs node-merge-stream
+  node-mimic-response node-minimatch node-minimist node-minipass
+  node-mixin-deep node-mute-stream node-n3 node-negotiator node-neo-async
+  node-npm-run-path node-object-inspect node-object-visit node-once
+  node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists
+  node-path-is-absolute node-path-is-inside node-path-type node-pify
+  node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry
+  node-promzard node-prr node-pump node-punycode node-quick-lru
+  node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime
+  node-regenerator-transform node-regexpp node-regjsgen node-repeat-string
+  node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer
+  node-retry node-run-queue node-safe-buffer node-sellside-emitter
+  node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit
+  node-slash node-slice-ansi node-source-list-map node-source-map
+  node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri
+  node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments
+  node-supports-color node-tapable node-terser node-text-table node-through
+  node-time-stamp node-to-fast-properties node-tslib node-type-check
+  node-typedarray node-typedarray-to-buffer node-undici
+  node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript
+  node-unicode-property-aliases-ecmascript node-unique-filename
+  node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources
+  node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n
+  node-yallist node-yaml nodejs x11-common x11-utils x11-xserver-utils
+  xdg-utils zutty
+Use 'sudo apt autoremove' to remove them.
+The following additional packages will be installed:
+  cri-tools ebtables kubernetes-cni
+The following NEW packages will be installed:
+  cri-tools ebtables kubeadm kubectl kubelet kubernetes-cni
+0 upgraded, 6 newly installed, 0 to remove and 273 not upgraded.
+Need to get 93.5 MB of archives.
+After this operation, 342 MB of additional disk space will be used.
+Get:1 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  cri-tools 1.30.1-1.1 [21.3 MB]
+Get:2 http://archive.ubuntu.com/ubuntu noble/main amd64 ebtables amd64 2.0.11-6build1 [88.4 kB]
+Get:3 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  kubeadm 1.30.0-1.1 [10.4 MB]
+Get:4 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  kubectl 1.30.0-1.1 [10.8 MB]
+Get:5 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  kubernetes-cni 1.4.0-1.1 [32.9 MB]
+Get:6 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.30/deb  kubelet 1.30.0-1.1 [18.1 MB]
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+dpkg-preconfigure: unable to re-open stdin: 
+Fetched 93.5 MB in 2s (60.7 MB/s)
+Selecting previously unselected package cri-tools.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 108349 files and directories currently installed.)
+Preparing to unpack .../0-cri-tools_1.30.1-1.1_amd64.deb ...
+Unpacking cri-tools (1.30.1-1.1) ...
+Selecting previously unselected package ebtables.
+Preparing to unpack .../1-ebtables_2.0.11-6build1_amd64.deb ...
+Unpacking ebtables (2.0.11-6build1) ...
+Selecting previously unselected package kubeadm.
+Preparing to unpack .../2-kubeadm_1.30.0-1.1_amd64.deb ...
+Unpacking kubeadm (1.30.0-1.1) ...
+Selecting previously unselected package kubectl.
+Preparing to unpack .../3-kubectl_1.30.0-1.1_amd64.deb ...
+Unpacking kubectl (1.30.0-1.1) ...
+Selecting previously unselected package kubernetes-cni.
+Preparing to unpack .../4-kubernetes-cni_1.4.0-1.1_amd64.deb ...
+Unpacking kubernetes-cni (1.4.0-1.1) ...
+Selecting previously unselected package kubelet.
+Preparing to unpack .../5-kubelet_1.30.0-1.1_amd64.deb ...
+Unpacking kubelet (1.30.0-1.1) ...
+Setting up kubectl (1.30.0-1.1) ...
+Setting up ebtables (2.0.11-6build1) ...
+Setting up cri-tools (1.30.1-1.1) ...
+Setting up kubernetes-cni (1.4.0-1.1) ...
+Setting up kubeadm (1.30.0-1.1) ...
+Setting up kubelet (1.30.0-1.1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend will not work on a dumb terminal, an emacs shell buffer, or without a controlling terminal.)
+debconf: falling back to frontend: Readline
+debconf: unable to initialize frontend: Readline
+debconf: (This frontend requires a controlling tty.)
+debconf: falling back to frontend: Teletype
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ psh @ session #18: sshd[1463]
+ psh @ user manager service: systemd[1039]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+kubeadm set on hold.
+kubelet set on hold.
+kubectl set on hold.
+containerd.io set on hold.
+--- [7/8] kubelet 서비스 활성화
+--- [8/8] /etc/hosts 노드 항목 추가
+=== [01-common] 완료: k8s-master3 ===
+다음 단계:
+  - proxy1/proxy2: 02-haproxy-keepalived.sh 실행
+  - k8s-master1:   03-master1-init.sh 실행
