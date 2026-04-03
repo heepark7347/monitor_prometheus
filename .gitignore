@@ -1,0 +1,21 @@
+# 홈 디렉터리 개인 파일 제외
+.Xauthority
+.bash_history
+.bash_logout
+.bashrc
+.profile
+.gitconfig
+.sudo_as_admin_successful
+
+# 캐시 및 런타임 디렉터리
+.cache/
+.local/
+.npm/
+.config/
+
+# SSH 키 (보안)
+.ssh/
+
+# Claude 내부 파일
+.claude.json
+.claude/
