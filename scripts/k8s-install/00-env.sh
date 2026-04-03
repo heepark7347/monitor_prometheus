@@ -30,7 +30,7 @@ export PROXY2_IP="10.10.120.231"
 export CALICO_VERSION="v3.28.0"
 
 # ── keepalived VIP 인터페이스 (proxy 노드의 실제 NIC 이름으로 변경 필요) ──────
-export VIP_INTERFACE="ens3"                   # ip a 로 확인 후 수정
+export VIP_INTERFACE="enX0"                   # ip a 로 확인 후 수정
 
 # ── keepalived 우선순위 ────────────────────────────────────────────────────────
 export KEEPALIVED_PRIORITY_PROXY1="101"       # MASTER 역할
