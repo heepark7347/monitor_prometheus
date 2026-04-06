@@ -28,6 +28,7 @@ scripts/{validate,helm-diff,check-cluster}.sh
 
 ## 역할 분담 — Claude Code는 코드 작성만, 배포는 인간이 수동 실행
 - `kubectl` / `helm` 명령어 직접 실행 **금지** — 실행 명령은 README 또는 scripts/에 명시
+- 단, 사용자가 명시적으로 요청 시 한시 허용 가능 (완료 후 즉시 원복)
 - 작업 완료 시 `docs/progress.md` 업데이트 필수
 
 ## 골든 원칙
