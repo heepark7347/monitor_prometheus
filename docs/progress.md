@@ -56,9 +56,37 @@ proxy2        Ready    worker                 v1.30.0   10.10.120.231
 | 2.6 | SNMP Exporter values | ✅ | feat(snmp): proxy 노드 배치 values | helm/values/snmp-exporter.yaml |
 | 2.7 | Secret 생성 스크립트 | ✅ | feat(security): create-secrets.sh | scripts/create-secrets.sh |
 | 2.8 | 배포 스크립트 | ✅ | feat(deploy): deploy-monitoring.sh | scripts/deploy-monitoring.sh |
-| 2.9 | local-path-provisioner 설치 | ⏳ | — | StorageClass 'local-path' 필요 |
-| 2.10 | Secret 실제 생성 | ⏳ | — | 사람이 직접 실행 |
-| 2.11 | Helm 배포 실행 | ⏳ | — | 사람이 직접 실행 |
+| 2.9 | local-path-provisioner 설치 | ✅ | — | v0.0.28, default StorageClass |
+| 2.10 | Secret 실제 생성 | ✅ | — | grafana-db-secret, postgresql-ha-secret, thanos-objstore-secret, minio-secret |
+| 2.11 | MinIO 설치 (Thanos 오브젝트스토리지) | ✅ | feat(monitoring): 배포 완료 | helm/values/minio.yaml, thanos 버킷 생성 |
+| 2.12 | kube-proxy 구 VIP 버그 수정 | ✅ | feat(monitoring): 배포 완료 | kube-proxy ConfigMap 10.10.120.229→10.10.120.220, IPVS 동기화 복구 |
+| 2.13 | Helm 배포 전체 실행 완료 | ✅ | feat(monitoring): 배포 완료 | 전체 파드 Running 확인 (2026-04-06) |
+
+### 모니터링 스택 최종 상태 (2026-04-06)
+
+| 컴포넌트 | 파드 | 노드 배치 |
+|----------|------|-----------|
+| Prometheus | 0,1 Running (3/3) | master2, master1 |
+| Alertmanager | 0,1,2 Running | master3, master2, master1 |
+| Grafana | 0,1,2 Running | master3, master2, master1 |
+| Thanos StoreGateway | 0,1,2 Running | master3, master2, master1 |
+| Thanos Query | 3개 Running | master2, master1, master3 |
+| Thanos QueryFrontend | 1개 Running | master1 |
+| Thanos Compactor | 1개 Running | master3 |
+| MinIO | 4개 Running | master3, master2, master1, master3 |
+| PostgreSQL | 1개 Running | master1 |
+| SNMP Exporter | 2개 Running | proxy2, proxy1 |
+| node-exporter | 5개 Running (DaemonSet) | 전 노드 |
+
+### 설치 중 발견된 주요 이슈
+
+| 이슈 | 원인 | 해결 |
+|------|------|------|
+| kube-proxy Service 라우팅 불능 | kube-proxy ConfigMap이 구 VIP(10.10.120.229) 참조 | config.conf + kubeconfig.conf 수정, 재시작 |
+| bitnami 이미지 접근 불가 | docker.io/bitnami 이미지 삭제/이전 | postgres:16-alpine, quay.io/thanos 직접 사용 |
+| Grafana init-chown-data 실패 | PVC 권한 문제 | initChownData.enabled: false |
+| Thanos sidecar 이미지 형식 | kube-prometheus-stack은 단일 문자열 요구 | "quay.io/thanos/thanos:v0.35.1" 로 수정 |
+| objectStorageConfig 키 이름 | secret → existingSecret | values 수정 |
 
 ## 실행 순서 요약
 
