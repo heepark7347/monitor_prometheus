@@ -1,0 +1,173 @@
+# =============================================================================
+# helm/values/thanos.yaml
+# Chart : bitnami/thanos
+# 배포  : scripts/deploy-monitoring.sh 참조
+#
+# 컴포넌트별 배치 전략
+#   - store-gateway-0 → master1 (zone-a)
+#   - store-gateway-1 → master2 (zone-b)
+#   - store-gateway-2 → master3 (zone-c)
+#   - query-0         → master1
+#   - query-1         → master2
+#   - query-2         → master3
+#   - query-3         → proxy1  (zone-proxy-a)
+#   - query-4         → proxy2  (zone-proxy-b)
+#   - compactor       → master3 (단일 인스턴스)
+#   - query-frontend  → master1 (단일, StatelessSet)
+#
+# 사전 준비
+#   - Secret 'thanos-objstore-secret' 생성 필요 (scripts/create-secrets.sh 참조)
+#     키: objstore.yml
+# =============================================================================
+
+image:
+  registry: quay.io
+  repository: thanos/thanos
+  tag: v0.35.1
+
+existingObjstoreSecret: thanos-objstore-secret
+
+# ── Query (Querier) ───────────────────────────────────────────────────────────
+query:
+  enabled: true
+  replicaCount: 5   # master3 + proxy2 = 5개 인스턴스
+
+  dnsDiscovery:
+    sidecarsService: prometheus-operated   # kube-prometheus-stack sidecar svc
+    sidecarsNamespace: monitoring
+
+  stores:
+    - dnssrv+_grpc._tcp.thanos-storegateway.monitoring.svc.cluster.local
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: query
+          topologyKey: "topology.kubernetes.io/zone"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# ── Query Frontend ────────────────────────────────────────────────────────────
+queryFrontend:
+  enabled: true
+  replicaCount: 1
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                  - zone-a  # master1
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# ── Store Gateway ─────────────────────────────────────────────────────────────
+storegateway:
+  enabled: true
+  replicaCount: 3
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - master
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: storegateway
+          topologyKey: "topology.kubernetes.io/zone"
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# ── Compactor ─────────────────────────────────────────────────────────────────
+compactor:
+  enabled: true
+
+  # 단일 인스턴스 — master3(zone-c) 고정
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                  - zone-c  # master3
+
+  retentionResolutionRaw: 30d
+  retentionResolution5m: 90d
+  retentionResolution1h: 365d
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 20Gi
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+# ── Ruler (선택적 — 현재 비활성) ─────────────────────────────────────────────
+ruler:
+  enabled: false
+
+# ── Receive (선택적 — 현재 비활성) ───────────────────────────────────────────
+receive:
+  enabled: false

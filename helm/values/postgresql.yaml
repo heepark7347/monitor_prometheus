@@ -1,0 +1,139 @@
+# =============================================================================
+# helm/values/postgresql.yaml
+# Chart : bitnami/postgresql-ha
+# 배포  : scripts/deploy-monitoring.sh 참조
+#
+# 배치 전략 (Pgpool + 3 PostgreSQL 인스턴스)
+#   - postgresql-ha-postgresql-0 → master1 (zone-a) — primary
+#   - postgresql-ha-postgresql-1 → master2 (zone-b) — standby
+#   - postgresql-ha-postgresql-2 → master3 (zone-c) — standby
+#   - pgpool (Deployment)        → master 노드 (replicas=2 권장)
+#
+# 사전 준비
+#   - Secret 'postgresql-ha-secret' 생성 필요 (scripts/create-secrets.sh 참조)
+#     키: postgresql-password, repmgr-password, pgpool-admin-password
+# =============================================================================
+
+postgresql:
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql-repmgr
+    tag: "16.3.0-debian-12-r19"
+
+  replicaCount: 3
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - master
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: postgresql
+          topologyKey: "topology.kubernetes.io/zone"
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 20Gi
+
+  # 패스워드: existingSecret 에서 주입 (하드코딩 금지)
+  existingSecret: postgresql-ha-secret
+  secretKeys:
+    adminPasswordKey: postgresql-password
+    replicationPasswordKey: repmgr-password
+
+  # Grafana DB 초기화
+  initdbScripts:
+    init-grafana.sql: |
+      CREATE DATABASE grafana;
+      CREATE USER grafana WITH ENCRYPTED PASSWORD '<REPLACE_ME_via_secret>';
+      GRANT ALL PRIVILEGES ON DATABASE grafana TO grafana;
+
+pgpool:
+  image:
+    registry: docker.io
+    repository: bitnami/pgpool
+    tag: "4.5.2-debian-12-r18"
+
+  replicaCount: 2
+
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - master
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                app.kubernetes.io/component: pgpool
+            topologyKey: "topology.kubernetes.io/zone"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  existingSecret: postgresql-ha-secret
+  secretKeys:
+    adminPasswordKey: pgpool-admin-password
+
+  # 읽기 부하를 standby 로 분산
+  loadBalancingOnWrite: transaction
+
+service:
+  type: ClusterIP
+  ports:
+    postgresql: 5432
+
+metrics:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/postgres-exporter
+    tag: "0.15.0-debian-12-r28"
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    interval: 30s
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi

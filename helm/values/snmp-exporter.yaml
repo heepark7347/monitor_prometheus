@@ -1,0 +1,118 @@
+# =============================================================================
+# helm/values/snmp-exporter.yaml
+# Chart : prometheus-community/prometheus-snmp-exporter
+# 배포  : scripts/deploy-monitoring.sh 참조
+#
+# 배치 전략
+#   - snmp-exporter-0 → proxy1 (zone-proxy-a)
+#   - snmp-exporter-1 → proxy2 (zone-proxy-b)
+#   네트워크 장비(스위치/라우터)에 가까운 proxy 노드에 배치
+#
+# 사전 준비
+#   - SNMP community string: Secret 'snmp-community-secret' (선택)
+#   - 실제 스크랩 대상 IP 는 configs/prometheus/rules/ 의 scrape config 에 정의
+# =============================================================================
+
+image:
+  registry: quay.io
+  repository: prometheus/snmp-exporter
+  tag: v0.26.0
+
+replicaCount: 2
+
+tolerations: []   # proxy 노드는 taint 없음
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: node-type
+              operator: In
+              values:
+                - proxy
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: prometheus-snmp-exporter
+        topologyKey: "topology.kubernetes.io/zone"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 9116
+
+# ── snmp.yml 설정 ─────────────────────────────────────────────────────────────
+# generator.yml 로 생성한 결과물을 configmap 으로 마운트
+# 실제 snmp.yml 은 configs/snmp-exporter/snmp.yml 에서 관리
+config: |
+  auths:
+    public_v2:
+      community: public
+      security_level: noAuthNoPriv
+      auth_protocol: MD5
+      priv_protocol: DES
+      version: 2
+  modules:
+    if_mib:
+      walk:
+        - interfaces
+      metrics:
+        - name: ifOperStatus
+          oid: 1.3.6.1.2.1.2.2.1.8
+          type: gauge
+          help: The current operational state of the interface
+          indexes:
+            - labelname: ifIndex
+              type: gauge
+          lookups:
+            - labels:
+                - ifIndex
+              labelname: ifDescr
+              oid: 1.3.6.1.2.1.2.2.1.2
+              type: DisplayString
+        - name: ifInOctets
+          oid: 1.3.6.1.2.1.2.2.1.10
+          type: counter
+          help: The total number of octets received on the interface
+          indexes:
+            - labelname: ifIndex
+              type: gauge
+          lookups:
+            - labels:
+                - ifIndex
+              labelname: ifDescr
+              oid: 1.3.6.1.2.1.2.2.1.2
+              type: DisplayString
+        - name: ifOutOctets
+          oid: 1.3.6.1.2.1.2.2.1.16
+          type: counter
+          help: The total number of octets transmitted out of the interface
+          indexes:
+            - labelname: ifIndex
+              type: gauge
+          lookups:
+            - labels:
+                - ifIndex
+              labelname: ifDescr
+              oid: 1.3.6.1.2.1.2.2.1.2
+              type: DisplayString
+
+# ── ServiceMonitor ────────────────────────────────────────────────────────────
+serviceMonitor:
+  enabled: true
+  namespace: monitoring
+  interval: 60s
+  # SNMP 대상 장비 목록: Prometheus scrape_config 의 relabeling 으로 주입
+  # 아래는 예시 — 실제 IP 는 configs/prometheus/rules/ 의 additional scrape config 에서 관리
+  params:
+    module:
+      - if_mib

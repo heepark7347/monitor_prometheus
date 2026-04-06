@@ -1,0 +1,164 @@
+# =============================================================================
+# helm/values/prometheus.yaml
+# Chart : prometheus-community/kube-prometheus-stack
+# 배포  : helm upgrade --install kube-prometheus monitoring/prometheus.yaml
+#         (scripts/deploy-monitoring.sh 참조)
+#
+# 배치 전략
+#   - prometheus-0  → master1 (zone-a)
+#   - prometheus-1  → master2 (zone-b)
+#   - node-exporter → 전 노드 DaemonSet
+# =============================================================================
+
+# ── Grafana: 별도 helm release 로 관리 ────────────────────────────────────────
+grafana:
+  enabled: false
+
+# ── Alertmanager: 별도 helm release 로 관리 ──────────────────────────────────
+alertmanager:
+  enabled: false
+
+# ── Prometheus Operator ───────────────────────────────────────────────────────
+prometheusOperator:
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                  - master
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# ── Prometheus ────────────────────────────────────────────────────────────────
+prometheus:
+  prometheusSpec:
+    image:
+      registry: quay.io
+      repository: prometheus/prometheus
+      tag: v2.53.0
+
+    replicas: 2
+
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: node-type
+                  operator: In
+                  values:
+                    - master
+                - key: topology.kubernetes.io/zone
+                  operator: In
+                  values:
+                    - zone-a   # master1
+                    - zone-b   # master2
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: prometheus
+            topologyKey: "topology.kubernetes.io/zone"
+
+    # ── Thanos sidecar: 장기 메트릭을 오브젝트 스토리지로 업로드 ──────────────
+    thanos:
+      image:
+        registry: quay.io
+        repository: thanos/thanos
+        tag: v0.35.1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      objectStorageConfig:
+        secret:
+          name: thanos-objstore-secret  # scripts/create-secrets.sh 참조
+          key: objstore.yml
+
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 2000m
+        memory: 4Gi
+
+    # Thanos 가 장기 보관하므로 로컬 보존 기간을 짧게
+    retention: 2d
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path  # local-path-provisioner 필요
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+
+    # monitoring namespace 내 모든 ServiceMonitor/PodMonitor/Rule 인식
+    serviceMonitorNamespaceSelector: {}
+    serviceMonitorSelector: {}
+    podMonitorSelector: {}
+    ruleNamespaceSelector: {}
+    ruleSelector: {}
+
+# ── node-exporter: 전 노드 DaemonSet ─────────────────────────────────────────
+nodeExporter:
+  enabled: true
+
+prometheus-node-exporter:
+  image:
+    registry: quay.io
+    repository: prometheus/node-exporter
+    tag: v1.8.1
+  # DaemonSet 이므로 모든 taint 허용
+  tolerations:
+    - operator: "Exists"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# ── kube-state-metrics ────────────────────────────────────────────────────────
+kubeStateMetrics:
+  enabled: true
+
+kube-state-metrics:
+  image:
+    registry: registry.k8s.io
+    repository: kube-state-metrics/kube-state-metrics
+    tag: v2.12.0
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi

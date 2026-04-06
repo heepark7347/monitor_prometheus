@@ -1,0 +1,110 @@
+# =============================================================================
+# helm/values/grafana.yaml
+# Chart : grafana/grafana
+# 배포  : scripts/deploy-monitoring.sh 참조
+#
+# 배치 전략
+#   - grafana-0 → master1 (zone-a)
+#   - grafana-1 → master2 (zone-b)
+#   - grafana-2 → master3 (zone-c)
+#
+# 사전 준비
+#   - Secret 'grafana-db-secret' 생성 필요 (scripts/create-secrets.sh 참조)
+#     키: GF_DATABASE_PASSWORD, GF_SECURITY_ADMIN_PASSWORD
+# =============================================================================
+
+image:
+  registry: docker.io
+  repository: grafana/grafana
+  tag: "11.1.0"
+
+replicas: 3
+
+# StatefulSet 으로 배포 (pod 재시작 시에도 동일 PVC 마운트)
+useStatefulSet: true
+
+tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: node-type
+              operator: In
+              values:
+                - master
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: grafana
+        topologyKey: "topology.kubernetes.io/zone"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+persistence:
+  enabled: true
+  storageClassName: local-path  # local-path-provisioner 필요
+  size: 10Gi
+
+# admin 패스워드: Secret 에서 주입 (아래 envFromSecret 참조)
+admin:
+  existingSecret: grafana-db-secret
+  userKey: GF_SECURITY_ADMIN_USER
+  passwordKey: GF_SECURITY_ADMIN_PASSWORD
+
+# DB 패스워드: 환경변수로 주입 (하드코딩 금지)
+envFromSecret: grafana-db-secret
+
+# grafana.ini 설정 — 민감 값은 위 envFromSecret 에서 주입된 환경변수 참조
+grafana.ini:
+  server:
+    root_url: "%(protocol)s://%(domain)s/grafana"
+  database:
+    type: postgres
+    host: postgresql-ha-pgpool.monitoring.svc.cluster.local:5432
+    name: grafana
+    user: grafana
+    # 패스워드: GF_DATABASE_PASSWORD 환경변수로 자동 적용 (grafana 내부 규칙)
+    ssl_mode: disable
+
+# ── 데이터소스: Thanos Query 프론트엔드 ──────────────────────────────────────
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Thanos
+        type: prometheus
+        url: http://thanos-query-frontend.monitoring.svc.cluster.local:9090
+        access: proxy
+        isDefault: true
+        jsonData:
+          timeInterval: 30s
+          httpMethod: POST
+
+# ── 서비스 ──────────────────────────────────────────────────────────────────
+service:
+  type: ClusterIP
+  port: 80
+
+# ── Ingress: Ingress Controller 배포 후 활성화 ────────────────────────────────
+ingress:
+  enabled: false
+  # enabled: true 로 변경 후 아래 설정 적용
+  # ingressClassName: nginx
+  # hosts:
+  #   - grafana.monitoring.local
+  # tls:
+  #   - secretName: grafana-tls
+  #     hosts:
+  #       - grafana.monitoring.local

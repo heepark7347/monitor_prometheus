@@ -48,12 +48,17 @@ proxy2        Ready    worker                 v1.30.0   10.10.120.231
 
 | # | 작업 | 상태 | 커밋 | 비고 |
 |---|------|------|------|------|
-| 2.1 | Prometheus HA values | ⏳ | — | helm/values/prometheus.yaml |
-| 2.2 | Thanos values | ⏳ | — | helm/values/thanos.yaml |
-| 2.3 | Grafana values | ⏳ | — | helm/values/grafana.yaml |
-| 2.4 | Alertmanager values | ⏳ | — | helm/values/alertmanager.yaml |
-| 2.5 | PostgreSQL values | ⏳ | — | helm/values/postgresql.yaml |
-| 2.6 | SNMP Exporter values | ⏳ | — | helm/values/snmp-exporter.yaml |
+| 2.1 | Prometheus HA values | ✅ | feat(prometheus): kube-prometheus-stack values | helm/values/prometheus.yaml |
+| 2.2 | Thanos values | ✅ | feat(thanos): store/query/compactor values | helm/values/thanos.yaml |
+| 2.3 | Grafana values | ✅ | feat(grafana): HA StatefulSet values | helm/values/grafana.yaml |
+| 2.4 | Alertmanager values | ✅ | feat(alertmanager): 3-replica HA values | helm/values/alertmanager.yaml |
+| 2.5 | PostgreSQL values | ✅ | feat(postgresql): HA + pgpool values | helm/values/postgresql.yaml |
+| 2.6 | SNMP Exporter values | ✅ | feat(snmp): proxy 노드 배치 values | helm/values/snmp-exporter.yaml |
+| 2.7 | Secret 생성 스크립트 | ✅ | feat(security): create-secrets.sh | scripts/create-secrets.sh |
+| 2.8 | 배포 스크립트 | ✅ | feat(deploy): deploy-monitoring.sh | scripts/deploy-monitoring.sh |
+| 2.9 | local-path-provisioner 설치 | ⏳ | — | StorageClass 'local-path' 필요 |
+| 2.10 | Secret 실제 생성 | ⏳ | — | 사람이 직접 실행 |
+| 2.11 | Helm 배포 실행 | ⏳ | — | 사람이 직접 실행 |
 
 ## 실행 순서 요약
 
