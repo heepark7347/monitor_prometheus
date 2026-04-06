@@ -1,0 +1,82 @@
+# =============================================================================
+# helm/values/minio.yaml
+# Chart : minio/minio
+# 용도  : Thanos 오브젝트 스토리지 백엔드 (클러스터 내부)
+#
+# 배치 전략
+#   - master 노드 3대에 분산 (분산 모드 4개 인스턴스 → zone 고려)
+#   - 실제 운영 시 외부 S3/Ceph 로 교체 권장
+#
+# 사전 준비
+#   - Secret 'minio-secret' 생성 (scripts/create-secrets.sh 참조)
+# =============================================================================
+
+image:
+  repository: quay.io/minio/minio
+  tag: RELEASE.2024-06-13T22-53-53Z
+
+mcImage:
+  repository: quay.io/minio/mc
+  tag: RELEASE.2024-06-12T14-34-03Z
+
+mode: distributed
+replicas: 4
+
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 50Gi
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+
+tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: node-type
+              operator: In
+              values:
+                - master
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app: minio
+          topologyKey: "topology.kubernetes.io/zone"
+
+# 버킷 자동 생성
+buckets:
+  - name: thanos
+    policy: none
+    purge: false
+
+# 인증: existingSecret 에서 주입
+existingSecret: minio-secret
+
+service:
+  type: ClusterIP
+  port: 9000
+
+consoleService:
+  type: ClusterIP
+  port: 9001
+
+metrics:
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    interval: 30s

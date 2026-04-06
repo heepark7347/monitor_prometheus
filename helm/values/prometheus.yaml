@@ -79,10 +79,7 @@ prometheus:
 
     # ── Thanos sidecar: 장기 메트릭을 오브젝트 스토리지로 업로드 ──────────────
     thanos:
-      image:
-        registry: quay.io
-        repository: thanos/thanos
-        tag: v0.35.1
+      image: "quay.io/thanos/thanos:v0.35.1"
       resources:
         requests:
           cpu: 100m
@@ -91,7 +88,7 @@ prometheus:
           cpu: 500m
           memory: 512Mi
       objectStorageConfig:
-        secret:
+        existingSecret:
           name: thanos-objstore-secret  # scripts/create-secrets.sh 참조
           key: objstore.yml
 

@@ -72,7 +72,7 @@ grafana.ini:
     root_url: "%(protocol)s://%(domain)s/grafana"
   database:
     type: postgres
-    host: postgresql-ha-pgpool.monitoring.svc.cluster.local:5432
+    host: postgresql.monitoring.svc.cluster.local:5432
     name: grafana
     user: grafana
     # 패스워드: GF_DATABASE_PASSWORD 환경변수로 자동 적용 (grafana 내부 규칙)
@@ -108,3 +108,8 @@ ingress:
   #   - secretName: grafana-tls
   #     hosts:
   #       - grafana.monitoring.local
+
+# ── init-chown-data 비활성화 (PVC 권한 문제 방지) ─────────────────────────────
+# local-path PV는 root로 생성되며 grafana 컨테이너가 직접 소유권 설정
+initChownData:
+  enabled: false
