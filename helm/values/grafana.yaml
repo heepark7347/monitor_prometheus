@@ -69,7 +69,7 @@ envFromSecret: grafana-db-secret
 # grafana.ini 설정 — 민감 값은 위 envFromSecret 에서 주입된 환경변수 참조
 grafana.ini:
   server:
-    root_url: "%(protocol)s://%(domain)s/grafana"
+    root_url: "%(protocol)s://%(domain)s/"
   database:
     type: postgres
     host: postgresql.monitoring.svc.cluster.local:5432
