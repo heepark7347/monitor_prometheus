@@ -78,6 +78,48 @@ grafana.ini:
     # 패스워드: GF_DATABASE_PASSWORD 환경변수로 자동 적용 (grafana 내부 규칙)
     ssl_mode: disable
 
+# ── 대시보드 사이드카: ConfigMap 라벨 grafana_dashboard=1 자동 임포트 ──────────
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    searchNamespace: monitoring
+  datasources:
+    enabled: false  # datasources는 아래 provisioning으로 관리
+
+# ── 대시보드 프로비저닝 (grafana.com에서 다운로드) ────────────────────────────
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+dashboards:
+  default:
+    # Node Exporter Full (grafana.com/dashboards/1860)
+    node-exporter-full:
+      gnetId: 1860
+      revision: 37
+      datasource: Thanos
+    # Kubernetes Cluster Overview (grafana.com/dashboards/7249)
+    k8s-cluster:
+      gnetId: 7249
+      revision: 1
+      datasource: Thanos
+    # Kubernetes Nodes (grafana.com/dashboards/11074)
+    k8s-nodes:
+      gnetId: 11074
+      revision: 9
+      datasource: Thanos
+
 # ── 데이터소스: Thanos Query 프론트엔드 ──────────────────────────────────────
 datasources:
   datasources.yaml:
