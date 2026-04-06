@@ -61,6 +61,8 @@ proxy2        Ready    worker                 v1.30.0   10.10.120.231
 | 2.11 | MinIO 설치 (Thanos 오브젝트스토리지) | ✅ | feat(monitoring): 배포 완료 | helm/values/minio.yaml, thanos 버킷 생성 |
 | 2.12 | kube-proxy 구 VIP 버그 수정 | ✅ | feat(monitoring): 배포 완료 | kube-proxy ConfigMap 10.10.120.229→10.10.120.220, IPVS 동기화 복구 |
 | 2.13 | Helm 배포 전체 실행 완료 | ✅ | feat(monitoring): 배포 완료 | 전체 파드 Running 확인 (2026-04-06) |
+| 2.14 | nginx-ingress 설치 | ✅ | feat(ingress): nginx-ingress DaemonSet | proxy1/2 hostNetwork DaemonSet |
+| 2.15 | Grafana 외부 접근 설정 | ✅ | feat(ingress): Grafana Ingress 배포 | http://<공인IP>/ → Grafana, root_url 수정 |
 
 ### 모니터링 스택 최종 상태 (2026-04-06)
 
