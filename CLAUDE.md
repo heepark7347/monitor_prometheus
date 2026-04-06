@@ -26,8 +26,8 @@ docs/{architecture,progress,runbook}.md
 scripts/{validate,helm-diff,check-cluster}.sh
 ```
 
-## 역할 분담 — Claude Code는 코드 작성만, 배포는 인간이 수동 실행
-- `kubectl` / `helm` 명령어 직접 실행 **금지** — 실행 명령은 README 또는 scripts/에 명시
+## 역할 분담 — 구축 완료 전까지 한시적으로 Claude Code 직접 실행 허용
+- `kubectl` / `helm` 명령어 직접 실행 **허용** (모니터링 스택 구축 완료 후 원복 예정)
 - 작업 완료 시 `docs/progress.md` 업데이트 필수
 
 ## 골든 원칙
