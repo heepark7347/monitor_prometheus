@@ -1,0 +1,57 @@
+# =============================================================================
+# helm/values/nginx-ingress.yaml
+# Chart : ingress-nginx/ingress-nginx
+# 배포  : proxy1 / proxy2 에 DaemonSet 으로 배치
+#         VIP 10.10.120.220 → proxy1/2:80/443 → Ingress → Grafana
+# =============================================================================
+
+controller:
+  kind: DaemonSet
+
+  # proxy 노드에만 배치
+  nodeSelector:
+    node-type: proxy
+
+  tolerations: []  # proxy 노드는 taint 없음
+
+  # hostNetwork: VIP(keepalived)가 enX0에 바인딩되므로 호스트 네트워크 사용
+  hostNetwork: true
+  hostPort:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+
+  # 외부 트래픽 보존
+  service:
+    enabled: false   # hostNetwork 사용 시 Service 불필요
+
+  image:
+    registry: registry.k8s.io
+    image: ingress-nginx/controller
+    tag: "v1.10.1"
+    digest: ""
+
+  admissionWebhooks:
+    image:
+      registry: registry.k8s.io
+      image: ingress-nginx/kube-webhook-certgen
+      tag: "v1.4.1"
+      digest: ""
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # 실제 클라이언트 IP 보존
+  config:
+    use-forwarded-headers: "true"
+    compute-full-forwarded-for: "true"
+    use-proxy-protocol: "false"
+
+defaultBackend:
+  enabled: false

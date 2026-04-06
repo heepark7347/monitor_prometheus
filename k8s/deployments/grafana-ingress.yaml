@@ -1,0 +1,24 @@
+# =============================================================================
+# k8s/deployments/grafana-ingress.yaml
+# Grafana 외부 접근용 Ingress
+# 접근: http://<공인IP>/ → grafana.monitoring.svc:80
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
