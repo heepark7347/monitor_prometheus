@@ -90,6 +90,41 @@ proxy2        Ready    worker                 v1.30.0   10.10.120.231
 | Thanos sidecar 이미지 형식 | kube-prometheus-stack은 단일 문자열 요구 | "quay.io/thanos/thanos:v0.35.1" 로 수정 |
 | objectStorageConfig 키 이름 | secret → existingSecret | values 수정 |
 
+## Phase 3 — 외부 GPU 서버 모니터링 연동
+
+| # | 작업 | 상태 | 커밋 | 비고 |
+|---|------|------|------|------|
+| 3.1 | GPU 서버 scrape 설정 | ✅ | feat(prometheus): GPU 서버 외부 스크래핑 추가 | 183.111.14.6 DCGM:9400, node:9100 |
+| 3.2 | DCGM 대시보드 추가 | ✅ | feat(prometheus): GPU 서버 외부 스크래핑 추가 | grafana.com/dashboards/12239 rev2 |
+
+### 적용 방법
+
+```bash
+# Prometheus values 업데이트
+helm upgrade kube-prometheus monitoring/kube-prometheus-stack \
+  -f helm/values/prometheus.yaml \
+  -n monitoring
+
+# Grafana values 업데이트
+helm upgrade grafana grafana/grafana \
+  -f helm/values/grafana.yaml \
+  -n monitoring
+```
+
+### GPU 서버 scrape 구조
+
+```
+183.111.14.6:9400 (DCGM Exporter)  ──┐
+                                      ├─→ Prometheus → Thanos → Grafana
+183.111.14.6:9100 (node-exporter)  ──┘
+```
+
+- 소스 IP: master1(10.10.120.232) / master2(10.10.120.233) 중 Prometheus pod 위치
+- job 이름: `gpu-server-dcgm`, `gpu-server-node`
+- 공통 레이블: `group=external-gpu`, `server=gpu-server-01`
+
+---
+
 ## 실행 순서 요약
 
 ```

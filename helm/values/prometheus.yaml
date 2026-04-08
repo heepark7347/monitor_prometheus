@@ -119,6 +119,27 @@ prometheus:
     ruleNamespaceSelector: {}
     ruleSelector: {}
 
+    # ── 외부 GPU 서버 스크래핑 ─────────────────────────────────────────────────
+    additionalScrapeConfigs:
+      # NVIDIA DCGM Exporter (GPU 메트릭)
+      - job_name: 'gpu-server-dcgm'
+        scrape_interval: 30s
+        scrape_timeout: 10s
+        static_configs:
+          - targets: ['183.111.14.6:9400']
+            labels:
+              group: external-gpu
+              server: gpu-server-01
+      # node-exporter (시스템 메트릭)
+      - job_name: 'gpu-server-node'
+        scrape_interval: 30s
+        scrape_timeout: 10s
+        static_configs:
+          - targets: ['183.111.14.6:9100']
+            labels:
+              group: external-gpu
+              server: gpu-server-01
+
 # ── node-exporter: 전 노드 DaemonSet ─────────────────────────────────────────
 nodeExporter:
   enabled: true

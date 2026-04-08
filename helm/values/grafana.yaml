@@ -119,6 +119,11 @@ dashboards:
       gnetId: 11074
       revision: 9
       datasource: Thanos
+    # NVIDIA DCGM Exporter — 외부 GPU 서버 (grafana.com/dashboards/12239)
+    gpu-server-dcgm:
+      gnetId: 12239
+      revision: 2
+      datasource: Thanos
 
 # ── 데이터소스: Thanos Query 프론트엔드 ──────────────────────────────────────
 datasources:
