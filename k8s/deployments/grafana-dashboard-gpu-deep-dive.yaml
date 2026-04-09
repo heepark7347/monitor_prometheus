@@ -288,7 +288,7 @@ data:
           "type": "timeseries",
           "title": "GPU 온도  ·  임계: 75°C (경고) / 83°C (위험, 열 제한 시작)",
           "description": "NVIDIA A100 TJmax=83°C 기준. 83°C 초과 시 thermal throttling 발생.",
-          "gridPos": { "x": 0, "y": 7, "w": 12, "h": 8 },
+          "gridPos": { "x": 0, "y": 7, "w": 8, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
@@ -328,7 +328,7 @@ data:
           "type": "timeseries",
           "title": "메모리 온도  ·  임계: 85°C (경고) / 95°C (위험, HBM2e 한계)",
           "description": "HBM2e 메모리 최대 권장 온도 95°C. A100 SXM 기준.",
-          "gridPos": { "x": 12, "y": 7, "w": 12, "h": 8 },
+          "gridPos": { "x": 8, "y": 7, "w": 8, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
@@ -359,6 +359,46 @@ data:
             {
               "expr": "DCGM_FI_DEV_MEMORY_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Memory Temp"
+            }
+          ]
+        },
+
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "팬 속도 (%)  ·  임계: 80% (경고) / 90% (위험)",
+          "description": "DCGM_FI_DEV_FAN_SPEED. A100/H100 등 패시브 쿨링 GPU는 수집 불가(N/A). 수집 활성화는 scripts/enable-dcgm-fan-speed.sh 참조.",
+          "gridPos": { "x": 16, "y": 7, "w": 8, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": { "mode": "thresholds" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green",  "value": null },
+                  { "color": "yellow", "value": 80 },
+                  { "color": "red",    "value": 90 }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": { "mode": "area" },
+                "lineWidth": 2,
+                "fillOpacity": 15
+              }
+            }
+          },
+          "options": {
+            "tooltip": { "mode": "single" },
+            "legend": { "displayMode": "list", "placement": "bottom" }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_FAN_SPEED{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Fan Speed"
             }
           ]
         },
