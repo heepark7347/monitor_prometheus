@@ -409,7 +409,7 @@ data:
           "targets": [
             {
               "expr": "(\n  (DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\"}     < bool 90)\n+ (DCGM_FI_DEV_GPU_TEMP{instance=\"$node_name\"}     < bool 83)\n+ (DCGM_FI_DEV_MEMORY_TEMP{instance=\"$node_name\"} < bool 95)\n+ (DCGM_FI_DEV_POWER_USAGE{instance=\"$node_name\"} < bool 380)\n+ (DCGM_FI_DEV_XID_ERRORS{instance=\"$node_name\"} == bool 0)\n)",
-              "legendFormat": "GPU {{gpu}}",
+              "legendFormat": "gpu{{gpu}}",
               "instant": true
             }
           ]
