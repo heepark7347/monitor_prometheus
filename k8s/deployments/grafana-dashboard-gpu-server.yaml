@@ -1,0 +1,447 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-gpu-server
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  gpu-server.json: |
+    {
+      "title": "GPU 서버 통합 모니터링 — gpu-server-01",
+      "uid": "gpu-server-01",
+      "tags": ["gpu", "external", "dcgm", "node-exporter"],
+      "timezone": "browser",
+      "schemaVersion": 38,
+      "version": 1,
+      "refresh": "30s",
+      "time": { "from": "now-1h", "to": "now" },
+      "templating": {
+        "list": [
+          {
+            "name": "datasource",
+            "type": "datasource",
+            "query": "prometheus",
+            "current": { "text": "Thanos", "value": "Thanos" },
+            "hide": 0,
+            "includeAll": false,
+            "label": "Datasource",
+            "refresh": 1
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "GPU 사용률",
+          "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 90 }
+                ]
+              }
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "avg(DCGM_FI_DEV_GPU_UTIL{job=\"gpu-server-dcgm\"})",
+              "legendFormat": "GPU Util"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "GPU 메모리 사용률",
+          "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 90 }
+                ]
+              }
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "avg(DCGM_FI_DEV_FB_USED{job=\"gpu-server-dcgm\"}) / (avg(DCGM_FI_DEV_FB_USED{job=\"gpu-server-dcgm\"}) + avg(DCGM_FI_DEV_FB_FREE{job=\"gpu-server-dcgm\"})) * 100",
+              "legendFormat": "GPU Mem"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "GPU 온도",
+          "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 75 },
+                  { "color": "red", "value": 85 }
+                ]
+              }
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "avg(DCGM_FI_DEV_GPU_TEMP{job=\"gpu-server-dcgm\"})",
+              "legendFormat": "Temp"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "GPU 전력 소모",
+          "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "watt",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 300 },
+                  { "color": "red", "value": 380 }
+                ]
+              }
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "avg(DCGM_FI_DEV_POWER_USAGE{job=\"gpu-server-dcgm\"})",
+              "legendFormat": "Power"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "CPU 사용률",
+          "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 90 }
+                ]
+              }
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "(1 - avg(rate(node_cpu_seconds_total{job=\"gpu-server-node\",mode=\"idle\"}[$__rate_interval]))) * 100",
+              "legendFormat": "CPU"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "type": "stat",
+          "title": "메모리 사용률",
+          "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 90 }
+                ]
+              }
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
+          "targets": [
+            {
+              "expr": "(1 - node_memory_MemAvailable_bytes{job=\"gpu-server-node\"} / node_memory_MemTotal_bytes{job=\"gpu-server-node\"}) * 100",
+              "legendFormat": "Memory"
+            }
+          ]
+        },
+
+        {
+          "id": 10,
+          "type": "row",
+          "title": "GPU",
+          "gridPos": { "x": 0, "y": 4, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 11,
+          "type": "timeseries",
+          "title": "GPU 사용률",
+          "gridPos": { "x": 0, "y": 5, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_GPU_UTIL{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} ({{modelName}})"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "type": "timeseries",
+          "title": "GPU 메모리 사용량",
+          "gridPos": { "x": 12, "y": 5, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "min": 0,
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_FB_USED{job=\"gpu-server-dcgm\"} * 1024 * 1024",
+              "legendFormat": "GPU {{gpu}} Used"
+            },
+            {
+              "expr": "DCGM_FI_DEV_FB_FREE{job=\"gpu-server-dcgm\"} * 1024 * 1024",
+              "legendFormat": "GPU {{gpu}} Free"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "GPU 온도",
+          "gridPos": { "x": 0, "y": 13, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_GPU_TEMP{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} Temp"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "type": "timeseries",
+          "title": "GPU 전력 소모",
+          "gridPos": { "x": 12, "y": 13, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "watt",
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_POWER_USAGE{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} Power"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "type": "timeseries",
+          "title": "GPU SM / 메모리 클럭",
+          "gridPos": { "x": 0, "y": 21, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "MHz",
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_SM_CLOCK{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} SM Clock"
+            },
+            {
+              "expr": "DCGM_FI_DEV_MEM_CLOCK{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} Mem Clock"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "type": "timeseries",
+          "title": "PCIe 처리량",
+          "gridPos": { "x": 12, "y": 21, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "KBs",
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_PCIE_TX_THROUGHPUT{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} PCIe TX"
+            },
+            {
+              "expr": "DCGM_FI_DEV_PCIE_RX_THROUGHPUT{job=\"gpu-server-dcgm\"}",
+              "legendFormat": "GPU {{gpu}} PCIe RX"
+            }
+          ]
+        },
+
+        {
+          "id": 20,
+          "type": "row",
+          "title": "시스템 (node-exporter)",
+          "gridPos": { "x": 0, "y": 29, "w": 24, "h": 1 },
+          "collapsed": false
+        },
+        {
+          "id": 21,
+          "type": "timeseries",
+          "title": "CPU 사용률",
+          "gridPos": { "x": 0, "y": 30, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "(1 - avg by(cpu)(rate(node_cpu_seconds_total{job=\"gpu-server-node\",mode=\"idle\"}[$__rate_interval]))) * 100",
+              "legendFormat": "Core {{cpu}}"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "type": "timeseries",
+          "title": "메모리 사용량",
+          "gridPos": { "x": 12, "y": 30, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "min": 0,
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "node_memory_MemTotal_bytes{job=\"gpu-server-node\"} - node_memory_MemAvailable_bytes{job=\"gpu-server-node\"}",
+              "legendFormat": "Used"
+            },
+            {
+              "expr": "node_memory_MemAvailable_bytes{job=\"gpu-server-node\"}",
+              "legendFormat": "Available"
+            },
+            {
+              "expr": "node_memory_Buffers_bytes{job=\"gpu-server-node\"} + node_memory_Cached_bytes{job=\"gpu-server-node\"}",
+              "legendFormat": "Buffers+Cache"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "type": "timeseries",
+          "title": "네트워크 I/O",
+          "gridPos": { "x": 0, "y": 38, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bps",
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_bytes_total{job=\"gpu-server-node\",device!~\"lo|veth.*\"}[$__rate_interval]) * 8",
+              "legendFormat": "RX {{device}}"
+            },
+            {
+              "expr": "rate(node_network_transmit_bytes_total{job=\"gpu-server-node\",device!~\"lo|veth.*\"}[$__rate_interval]) * 8",
+              "legendFormat": "TX {{device}}"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "type": "timeseries",
+          "title": "디스크 I/O",
+          "gridPos": { "x": 12, "y": 38, "w": 12, "h": 8 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Bps",
+              "color": { "mode": "palette-classic" }
+            }
+          },
+          "options": { "tooltip": { "mode": "multi" } },
+          "targets": [
+            {
+              "expr": "rate(node_disk_read_bytes_total{job=\"gpu-server-node\",device!~\"dm-.*\"}[$__rate_interval])",
+              "legendFormat": "Read {{device}}"
+            },
+            {
+              "expr": "rate(node_disk_written_bytes_total{job=\"gpu-server-node\",device!~\"dm-.*\"}[$__rate_interval])",
+              "legendFormat": "Write {{device}}"
+            }
+          ]
+        }
+      ]
+    }
