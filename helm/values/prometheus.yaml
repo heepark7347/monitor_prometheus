@@ -122,6 +122,7 @@ prometheus:
     # ── 외부 GPU 서버 스크래핑 ─────────────────────────────────────────────────
     additionalScrapeConfigs:
       # NVIDIA DCGM Exporter (GPU 메트릭)
+      # instance 레이블을 IP만으로 정규화 (포트 제거) → 대시보드 변수와 일치
       - job_name: 'gpu-server-dcgm'
         scrape_interval: 30s
         scrape_timeout: 10s
@@ -130,8 +131,14 @@ prometheus:
             labels:
               group: external-gpu
               server: gpu-server-01
-      # node-exporter (시스템 메트릭)
-      - job_name: 'gpu-server-node'
+        relabel_configs:
+          - source_labels: [__address__]
+            regex: '([^:]+)(?::\d+)?'
+            target_label: instance
+            replacement: '${1}'
+      # node-exporter (시스템 메트릭) + 대시보드 up{job="external-gpu-nodes"} 제공
+      # instance 레이블을 IP만으로 정규화 (포트 제거) → DCGM instance와 통일
+      - job_name: 'external-gpu-nodes'
         scrape_interval: 30s
         scrape_timeout: 10s
         static_configs:
@@ -139,6 +146,11 @@ prometheus:
             labels:
               group: external-gpu
               server: gpu-server-01
+        relabel_configs:
+          - source_labels: [__address__]
+            regex: '([^:]+)(?::\d+)?'
+            target_label: instance
+            replacement: '${1}'
 
 # ── node-exporter: 전 노드 DaemonSet ─────────────────────────────────────────
 nodeExporter:
