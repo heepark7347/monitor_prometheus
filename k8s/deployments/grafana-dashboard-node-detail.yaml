@@ -354,7 +354,7 @@ data:
           "type": "stat",
           "title": "GPU $gpu_id",
           "description": "GPU $gpu_id 사용률. 클릭 시 GPU Deep-Dive로 이동.",
-          "gridPos": { "x": 0, "y": 5, "w": 3, "h": 5 },
+          "gridPos": { "x": 0, "y": 5, "w": 2, "h": 3 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 8,
@@ -403,7 +403,7 @@ data:
           "id": 10,
           "type": "row",
           "title": "시스템 리소스",
-          "gridPos": { "x": 0, "y": 10, "w": 24, "h": 1 },
+          "gridPos": { "x": 0, "y": 8, "w": 24, "h": 1 },
           "collapsed": false
         },
 
@@ -411,7 +411,7 @@ data:
           "id": 11,
           "type": "timeseries",
           "title": "CPU 사용률 (코어별)",
-          "gridPos": { "x": 0, "y": 11, "w": 12, "h": 8 },
+          "gridPos": { "x": 0, "y": 9, "w": 12, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
@@ -434,7 +434,7 @@ data:
           "id": 12,
           "type": "timeseries",
           "title": "메모리 사용량",
-          "gridPos": { "x": 12, "y": 11, "w": 12, "h": 8 },
+          "gridPos": { "x": 12, "y": 9, "w": 12, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
@@ -464,7 +464,7 @@ data:
           "id": 13,
           "type": "timeseries",
           "title": "네트워크 I/O",
-          "gridPos": { "x": 0, "y": 19, "w": 12, "h": 8 },
+          "gridPos": { "x": 0, "y": 17, "w": 12, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
@@ -489,7 +489,7 @@ data:
           "id": 14,
           "type": "timeseries",
           "title": "디스크 I/O",
-          "gridPos": { "x": 12, "y": 19, "w": 12, "h": 8 },
+          "gridPos": { "x": 12, "y": 17, "w": 12, "h": 8 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
@@ -514,7 +514,7 @@ data:
           "id": 20,
           "type": "row",
           "title": "GPU Sensors — GPU $gpu_id ($node_name)",
-          "gridPos": { "x": 0, "y": 27, "w": 24, "h": 1 },
+          "gridPos": { "x": 0, "y": 25, "w": 24, "h": 1 },
           "collapsed": false,
           "repeat": "gpu_id",
           "repeatDirection": "v"
@@ -525,7 +525,7 @@ data:
           "type": "gauge",
           "title": "온도 — GPU $gpu_id",
           "description": "GPU $gpu_id 실시간 온도. 클릭 시 GPU 상세 대시보드로 이동.",
-          "gridPos": { "x": 0, "y": 28, "w": 6, "h": 6 },
+          "gridPos": { "x": 0, "y": 26, "w": 6, "h": 6 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 4,
@@ -574,7 +574,7 @@ data:
           "type": "gauge",
           "title": "사용률 — GPU $gpu_id",
           "description": "GPU $gpu_id 실시간 Utilization. 클릭 시 GPU 상세 대시보드로 이동.",
-          "gridPos": { "x": 6, "y": 28, "w": 6, "h": 6 },
+          "gridPos": { "x": 6, "y": 26, "w": 6, "h": 6 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 4,
@@ -623,7 +623,7 @@ data:
           "type": "gauge",
           "title": "메모리 사용률 — GPU $gpu_id",
           "description": "GPU $gpu_id 메모리 사용 비율. 클릭 시 GPU 상세 대시보드로 이동.",
-          "gridPos": { "x": 12, "y": 28, "w": 6, "h": 6 },
+          "gridPos": { "x": 12, "y": 26, "w": 6, "h": 6 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 4,
@@ -672,7 +672,7 @@ data:
           "type": "gauge",
           "title": "전력 소모 — GPU $gpu_id",
           "description": "GPU $gpu_id 실시간 전력 소모. 클릭 시 GPU 상세 대시보드로 이동.",
-          "gridPos": { "x": 18, "y": 28, "w": 6, "h": 6 },
+          "gridPos": { "x": 18, "y": 26, "w": 6, "h": 6 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 4,
@@ -720,7 +720,7 @@ data:
           "id": 30,
           "type": "row",
           "title": "GPU 시계열 — GPU $gpu_id",
-          "gridPos": { "x": 0, "y": 34, "w": 24, "h": 1 },
+          "gridPos": { "x": 0, "y": 32, "w": 24, "h": 1 },
           "collapsed": false,
           "repeat": "gpu_id",
           "repeatDirection": "v"
@@ -731,7 +731,7 @@ data:
           "type": "timeseries",
           "title": "GPU $gpu_id — 사용률 / 온도 / 전력",
           "description": "GPU $gpu_id 의 시계열 트렌드. 클릭 시 GPU 상세 대시보드로 이동.",
-          "gridPos": { "x": 0, "y": 35, "w": 12, "h": 8 },
+          "gridPos": { "x": 0, "y": 33, "w": 12, "h": 8 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 2,
@@ -787,7 +787,7 @@ data:
           "type": "timeseries",
           "title": "GPU $gpu_id — 메모리 사용량",
           "description": "GPU $gpu_id 메모리 시계열. 클릭 시 GPU 상세 대시보드로 이동.",
-          "gridPos": { "x": 12, "y": 35, "w": 12, "h": 8 },
+          "gridPos": { "x": 12, "y": 33, "w": 12, "h": 8 },
           "repeat": "gpu_id",
           "repeatDirection": "h",
           "maxPerRow": 2,
