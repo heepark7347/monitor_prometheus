@@ -136,6 +136,27 @@ prometheus:
             regex: '([^:]+)(?::\d+)?'
             target_label: instance
             replacement: '${1}'
+      # SNMP (CPU load / 메모리 / 디스크 / 인터페이스 트래픽)
+      # snmp-exporter를 프록시로 사용, instance 레이블 = GPU 서버 IP
+      - job_name: 'snmp-gpu-server'
+        scrape_interval: 60s
+        scrape_timeout: 30s
+        metrics_path: /snmp
+        params:
+          module: [linux_mib, if_mib]
+          auth: [public_v2]
+        static_configs:
+          - targets: ['183.111.14.6']
+            labels:
+              group: external-gpu
+              server: gpu-server-01
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: snmp-exporter-prometheus-snmp-exporter.monitoring.svc.cluster.local:9116
       # node-exporter (시스템 메트릭) + 대시보드 up{job="external-gpu-nodes"} 제공
       # instance 레이블을 IP만으로 정규화 (포트 제거) → DCGM instance와 통일
       - job_name: 'external-gpu-nodes'
