@@ -392,7 +392,7 @@ data:
               "links": [
                 {
                   "title": "GPU Deep-Dive →",
-                  "url": "/d/gpu_detail?var-datasource=${datasource}&var-node_name=${node_name}&var-gpu_id=${gpu_id}&${__url_time_range}",
+                  "url": "/d/gpu_detail?var-datasource=${datasource}&var-node_name=${node_name}&var-gpu_id=0&${__url_time_range}",
                   "targetBlank": false
                 }
               ]
