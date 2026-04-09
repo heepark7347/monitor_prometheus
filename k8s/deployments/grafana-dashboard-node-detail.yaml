@@ -402,7 +402,7 @@ data:
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "" },
             "colorMode": "background",
             "graphMode": "none",
-            "textMode": "auto",
+            "textMode": "value_and_name",
             "text": { "valueSize": 28 },
             "orientation": "auto"
           },
