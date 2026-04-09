@@ -231,7 +231,7 @@ data:
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": {
             "defaults": {
-              "unit": "bytes",
+              "unit": "decbytes",
               "min": 0,
               "color": { "mode": "palette-classic" }
             }
@@ -239,11 +239,11 @@ data:
           "options": { "tooltip": { "mode": "multi" } },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_FB_USED{job=\"gpu-server-dcgm\"} * 1024 * 1024",
+              "expr": "DCGM_FI_DEV_FB_USED{job=\"gpu-server-dcgm\"}",
               "legendFormat": "GPU {{gpu}} Used"
             },
             {
-              "expr": "DCGM_FI_DEV_FB_FREE{job=\"gpu-server-dcgm\"} * 1024 * 1024",
+              "expr": "DCGM_FI_DEV_FB_FREE{job=\"gpu-server-dcgm\"}",
               "legendFormat": "GPU {{gpu}} Free"
             }
           ]
