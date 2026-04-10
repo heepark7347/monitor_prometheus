@@ -96,6 +96,8 @@ proxy2        Ready    worker                 v1.30.0   10.10.120.231
 |---|------|------|------|------|
 | 3.1 | GPU 서버 scrape 설정 | ✅ | feat(prometheus): GPU 서버 외부 스크래핑 추가 | 183.111.14.6 DCGM:9400, node:9100 |
 | 3.2 | DCGM 대시보드 추가 | ✅ | feat(prometheus): GPU 서버 외부 스크래핑 추가 | grafana.com/dashboards/12239 rev2 |
+| 3.3 | SNMP monitor community 전환 | ✅ | feat(snmp): GPU 서버 SNMP community monitor 전환 | monitor_v2 auth 추가, snmp-gpu-server job 전환 |
+| 3.4 | GPU Deep-Dive SNMP 패널 추가 | ✅ | feat(snmp): GPU 서버 SNMP community monitor 전환 | CPU/메모리/네트워크/디스크 4개 패널 (row 80~84) |
 
 ### 적용 방법
 

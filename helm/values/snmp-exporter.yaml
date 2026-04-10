@@ -58,6 +58,12 @@ config: |
       auth_protocol: MD5
       priv_protocol: DES
       version: 2
+    monitor_v2:
+      community: monitor
+      security_level: noAuthNoPriv
+      auth_protocol: MD5
+      priv_protocol: DES
+      version: 2
   modules:
     if_mib:
       walk:

@@ -144,7 +144,7 @@ prometheus:
         metrics_path: /snmp
         params:
           module: [linux_mib, if_mib]
-          auth: [public_v2]
+          auth: [monitor_v2]
         static_configs:
           - targets: ['183.111.14.6']
             labels:
