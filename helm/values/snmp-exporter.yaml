@@ -67,7 +67,7 @@ config: |
   modules:
     if_mib:
       walk:
-        - interfaces
+        - 1.3.6.1.2.1.2   # ifTable (IF-MIB)
       metrics:
         - name: ifOperStatus
           oid: 1.3.6.1.2.1.2.2.1.8
@@ -110,33 +110,8 @@ config: |
               type: DisplayString
     linux_mib:
       walk:
-        - 1.3.6.1.4.1.2021.10   # UCD-SNMP laTable (CPU load averages)
-        - 1.3.6.1.4.1.2021.4    # UCD-SNMP memTable (memory)
         - 1.3.6.1.2.1.25.2.3    # HOST-RESOURCES-MIB hrStorageTable (disk)
       metrics:
-        # ── CPU Load Average ────────────────────────────────────────────────────
-        - name: laLoad
-          oid: 1.3.6.1.4.1.2021.10.1.3
-          type: gauge
-          help: Load average (1/5/15 min)
-          indexes:
-            - labelname: laIndex
-              type: gauge
-          lookups:
-            - labels:
-                - laIndex
-              labelname: laNames
-              oid: 1.3.6.1.4.1.2021.10.1.2
-              type: DisplayString
-        # ── Memory ──────────────────────────────────────────────────────────────
-        - name: memTotalReal
-          oid: 1.3.6.1.4.1.2021.4.5.0
-          type: gauge
-          help: Total real/physical memory in kB
-        - name: memAvailReal
-          oid: 1.3.6.1.4.1.2021.4.6.0
-          type: gauge
-          help: Available real/physical memory in kB
         # ── Disk (hrStorage) ────────────────────────────────────────────────────
         - name: hrStorageAllocationUnits
           oid: 1.3.6.1.2.1.25.2.3.1.4
