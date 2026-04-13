@@ -2,7 +2,7 @@ apiVersion: v1
 data:
   gpu-cluster-overview.json: '{"title": "Cluster Multi-GPU Overview", "uid": "gpu-cluster-overview",
     "tags": ["gpu", "cluster", "overview", "dcgm", "external"], "timezone": "browser",
-    "schemaVersion": 38, "version": 7, "refresh": "30s", "time": {"from": "now-1h",
+    "schemaVersion": 38, "version": 8, "refresh": "30s", "time": {"from": "now-1h",
     "to": "now"}, "templating": {"list": [{"name": "datasource", "type": "datasource",
     "query": "prometheus", "current": {"text": "Thanos", "value": "Thanos"}, "hide":
     0, "label": "Datasource", "refresh": 1}]}, "panels": [{"id": 1, "type": "stat",
@@ -29,27 +29,27 @@ data:
     "auto", "text": {"valueSize": 40}}, "targets": [{"expr": "count(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\",instance!~\".+:[0-9]+\"})",
     "instant": true}]}, {"id": 10, "type": "row", "title": "노드별 리소스 현황", "gridPos":
     {"x": 0, "y": 4, "w": 24, "h": 1}, "collapsed": false}, {"id": 11, "type": "table",
-    "title": "노드 Utilization", "description": "노드명 클릭 → Node Detail 이동. 임계치: 주황≥80%
-    / 빨강≥90%", "gridPos": {"x": 0, "y": 5, "w": 24, "h": 14}, "datasource": {"type":
-    "prometheus", "uid": "${datasource}"}, "fieldConfig": {"defaults": {"unit": "percent",
-    "min": 0, "max": 100, "decimals": 1, "color": {"mode": "thresholds"}, "thresholds":
-    {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange",
-    "value": 80}, {"color": "red", "value": 90}]}, "custom": {"align": "auto", "displayMode":
-    "gradient-gauge", "minWidth": 150}}, "overrides": [{"matcher": {"id": "byName",
-    "options": "노드명"}, "properties": [{"id": "custom.displayMode", "value": "auto"},
-    {"id": "custom.align", "value": "left"}, {"id": "custom.width", "value": 200},
-    {"id": "custom.pinned", "value": "left"}, {"id": "unit", "value": "string"}, {"id":
-    "links", "value": [{"title": "", "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.노드명}&${__url_time_range}",
+    "title": "노드 Utilization (노드명 클릭 → Node Detail)", "description": "노드명 클릭 시 즉시
+    Node Detail 이동. 주황≥80% / 빨강≥90%", "gridPos": {"x": 0, "y": 5, "w": 24, "h": 14},
+    "datasource": {"type": "prometheus", "uid": "${datasource}"}, "fieldConfig": {"defaults":
+    {"unit": "percent", "min": 0, "max": 100, "decimals": 1, "color": {"mode": "thresholds"},
+    "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null},
+    {"color": "orange", "value": 80}, {"color": "red", "value": 90}]}, "custom": {"align":
+    "auto", "displayMode": "gradient-gauge", "minWidth": 150}}, "overrides": [{"matcher":
+    {"id": "byName", "options": "노드명"}, "properties": [{"id": "custom.displayMode",
+    "value": "auto"}, {"id": "custom.align", "value": "left"}, {"id": "custom.width",
+    "value": 200}, {"id": "custom.pinned", "value": "left"}, {"id": "unit", "value":
+    "string"}, {"id": "links", "value": [{"title": "", "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.노드명}&${__url_time_range}",
     "targetBlank": false}]}]}]}, "options": {"showHeader": true, "sortBy": [{"displayName":
     "노드명", "desc": false}], "footer": {"show": false}}, "transformations": [{"id":
-    "labelsToFields", "options": {"mode": "columns"}}, {"id": "joinByField", "options":
-    {"byField": "instance", "mode": "outer"}}, {"id": "organize", "options": {"renameByName":
-    {"instance": "노드명", "Value": "CPU %", "Value 1": "MEM %", "Value 2": "GPU Util
-    %", "Value 3": "GPU Mem %", "Value 4": "Disk %"}, "excludeByName": {"Time": true,
-    "Time 1": true, "Time 2": true, "Time 3": true, "Time 4": true}, "indexByName":
-    {"instance": 0, "Value": 1, "Value 1": 2, "Value 2": 3, "Value 3": 4, "Value 4":
-    5}}}], "targets": [{"refId": "CPU", "instant": true, "range": false, "legendFormat":
-    "", "expr": "avg by(instance)(avg without(cpu)(1-rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[5m])))*100"},
+    "filterFieldsByName", "options": {"include": {"names": ["Value"]}}}, {"id": "labelsToFields",
+    "options": {"mode": "columns"}}, {"id": "merge", "options": {}}, {"id": "organize",
+    "options": {"renameByName": {"instance": "노드명", "Value #CPU": "CPU %", "Value
+    #MEM": "MEM %", "Value #GPU_UTIL": "GPU Util %", "Value #GPU_MEM": "GPU Mem %",
+    "Value #DISK": "Disk %"}, "indexByName": {"instance": 0, "Value #CPU": 1, "Value
+    #MEM": 2, "Value #GPU_UTIL": 3, "Value #GPU_MEM": 4, "Value #DISK": 5}}}], "targets":
+    [{"refId": "CPU", "instant": true, "range": false, "legendFormat": "", "expr":
+    "avg by(instance)(avg without(cpu)(1-rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[5m])))*100"},
     {"refId": "MEM", "instant": true, "range": false, "legendFormat": "", "expr":
     "avg by(instance)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100"},
     {"refId": "GPU_UTIL", "instant": true, "range": false, "legendFormat": "", "expr":
