@@ -305,7 +305,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Value 6"
+                  "options": "장비 상태"
                 },
                 "properties": [
                   {
