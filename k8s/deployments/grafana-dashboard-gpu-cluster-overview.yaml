@@ -339,7 +339,19 @@ data:
                   },
                   {
                     "id": "unit",
-                    "value": "short"
+                    "value": "none"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "min",
+                    "value": 0
+                  },
+                  {
+                    "id": "max",
+                    "value": 1
                   },
                   {
                     "id": "thresholds",
@@ -361,14 +373,23 @@ data:
                     "id": "mappings",
                     "value": [
                       {
-                        "type": "value",
+                        "type": "range",
                         "options": {
-                          "0": {
+                          "from": 0,
+                          "to": 0.9,
+                          "result": {
                             "text": "DOWN",
                             "color": "red",
                             "index": 0
-                          },
-                          "1": {
+                          }
+                        }
+                      },
+                      {
+                        "type": "range",
+                        "options": {
+                          "from": 1,
+                          "to": 1,
+                          "result": {
                             "text": "UP",
                             "color": "green",
                             "index": 1
