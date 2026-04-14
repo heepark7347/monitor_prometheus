@@ -418,7 +418,9 @@ data:
                   "Time 3": true,
                   "Time 4": true,
                   "Time 5": true,
-                  "Time 6": true
+                  "Time 6": true,
+                  "job": true,
+                  "group": true
                 }
               }
             }
@@ -464,7 +466,7 @@ data:
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(up{job=\"external-gpu-nodes\"}, \"instance\", \"$1\", \"instance\", \"(.+):[0-9]+\")"
+              "expr": "max by(instance)(label_replace(up{job=\"external-gpu-nodes\"}, \"instance\", \"$1\", \"instance\", \"(.+):[0-9]+\"))"
             }
           ]
         }
