@@ -207,7 +207,7 @@ data:
         {
           "id": 10,
           "type": "row",
-          "title": "노드별 리소스 현황",
+          "title": "전체 노드 정보",
           "gridPos": {
             "x": 0,
             "y": 4,
@@ -219,7 +219,7 @@ data:
         {
           "id": 11,
           "type": "table",
-          "title": "노드 Utilization (노드명 클릭 → Node Detail)",
+          "title": "노드 정보(노드명 클릭 → Node Detail)",
           "description": "노드명 클릭 시 즉시Node Detail 이동. 주황≥80% / 빨강≥90%",
           "gridPos": {
             "x": 0,
@@ -301,6 +301,66 @@ data:
                     ]
                   }
                 ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "노드 상태"
+                },
+                "properties": [
+                  {
+                    "id": "custom.displayMode",
+                    "value": "color-text"
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  },
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "red",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "0": {
+                            "text": "DOWN",
+                            "color": "red",
+                            "index": 0
+                          },
+                          "1": {
+                            "text": "UP",
+                            "color": "green",
+                            "index": 1
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -339,15 +399,17 @@ data:
                   "Value 2": "Memory 사용률",
                   "Value 3": "평균 GPU 사용률",
                   "Value 4": "GPU 메모리 사용률",
-                  "Value 5": "디스크 사용률"
+                  "Value 5": "디스크 사용률",
+                  "Value 6": "노드 상태"
                 },
                 "indexByName": {
                   "instance": 0,
-                  "Value 1": 1,
-                  "Value 2": 2,
-                  "Value 3": 3,
-                  "Value 4": 4,
-                  "Value 5": 5
+                  "Value 6": 1,
+                  "Value 1": 2,
+                  "Value 2": 3,
+                  "Value 3": 4,
+                  "Value 4": 5,
+                  "Value 5": 6
                 },
                 "excludeByName": {
                   "Time": true,
@@ -355,7 +417,8 @@ data:
                   "Time 2": true,
                   "Time 3": true,
                   "Time 4": true,
-                  "Time 5": true
+                  "Time 5": true,
+                  "Time 6": true
                 }
               }
             }
@@ -395,6 +458,13 @@ data:
               "range": false,
               "legendFormat": "",
               "expr": "label_replace((1-sum by(instance)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(instance)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100,\"instance\",\"$1\",\"instance\",\"(.+):[0-9]+\")"
+            },
+            {
+              "refId": "STATUS",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(up{job=\"external-gpu-nodes\"}, \"instance\", \"$1\", \"instance\", \"(.+):[0-9]+\")"
             }
           ]
         }
