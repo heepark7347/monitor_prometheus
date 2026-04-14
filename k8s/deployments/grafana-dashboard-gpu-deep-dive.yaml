@@ -1,6 +1,1407 @@
 apiVersion: v1
 data:
-  gpu-deep-dive.json: "{\n  \"title\": \"GPU Deep-Dive\", \n  \"uid\": \"gpu_detail\", \n  \"tags\": [\n    \"gpu\", \n    \"deep-dive\", \n    \"dcgm\", \n    \"precision\"\n  ], \n  \"timezone\": \"browser\", \n  \"schemaVersion\": 38, \n  \"version\": 2, \n  \"refresh\": \"15s\", \n  \"time\": {\n    \"from\": \"now-1h\", \n    \"to\": \"now\"\n  }, \n  \"templating\": {\n    \"list\": [\n      {\n        \"name\": \"datasource\", \n        \"type\": \"datasource\", \n        \"query\": \"prometheus\", \n        \"current\": {\n          \"text\": \"Thanos\", \n          \"value\": \"Thanos\"\n        }, \n        \"hide\": 0, \n        \"label\": \"Datasource\", \n        \"refresh\": 1\n      }, \n      {\n        \"name\": \"node_name\", \n        \"type\": \"query\", \n        \"datasource\": {\n          \"type\": \"prometheus\", \n          \"uid\": \"${datasource}\"\n        }, \n        \"query\": \"label_values(up{job=\\\"external-gpu-nodes\\\"}, instance)\", \n        \"label\": \"Node\", \n        \"multi\": false, \n        \"includeAll\": false, \n        \"hide\": 0, \n        \"refresh\": 2, \n        \"sort\": 1\n      }, \n      {\n        \"name\": \"gpu_id\", \n        \"type\": \"query\", \n        \"datasource\": {\n          \"type\": \"prometheus\", \n          \"uid\": \"${datasource}\"\n        }, \n        \"query\": \"label_values(DCGM_FI_DEV_GPU_UTIL{instance=\\\"$node_name\\\"}, gpu)\", \n        \"label\": \"GPU ID\", \n        \"multi\": false, \n        \"includeAll\": false, \n        \"hide\": 0, \n        \"refresh\": 2, \n        \"sort\": 3\n      }\n    ]\n  }, \n  \"panels\": [\n    {\n      \"id\": 70, \n      \"type\": \"gauge\", \n      \"title\": \"GPU 온도\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 0, \n        \"w\": 4, \n        \"h\": 6\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"celsius\", \n          \"min\": 0, \n          \"max\": 120, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 75\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 83\n              }\n            ]\n          }\n        }\n      }, \n      \"options\": {\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ]\n        }, \n        \"orientation\": \"auto\", \n        \"showThresholdLabels\": false, \n        \"showThresholdMarkers\": true, \n        \"text\": {\n          \"valueSize\": 36\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_GPU_TEMP{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"GPU {{gpu}}\", \n          \"instant\": true\n        }\n      ]\n    }, \n    {\n      \"id\": 71, \n      \"type\": \"gauge\", \n      \"title\": \"GPU 사용률\", \n      \"gridPos\": {\n        \"x\": 4, \n        \"y\": 0, \n        \"w\": 4, \n        \"h\": 6\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"percent\", \n          \"min\": 0, \n          \"max\": 100, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 70\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 90\n              }\n            ]\n          }\n        }\n      }, \n      \"options\": {\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ]\n        }, \n        \"orientation\": \"auto\", \n        \"showThresholdLabels\": false, \n        \"showThresholdMarkers\": true, \n        \"text\": {\n          \"valueSize\": 36\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_GPU_UTIL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"GPU {{gpu}}\", \n          \"instant\": true\n        }\n      ]\n    }, \n    {\n      \"id\": 72, \n      \"type\": \"gauge\", \n      \"title\": \"메모리 사용률\", \n      \"gridPos\": {\n        \"x\": 8, \n        \"y\": 0, \n        \"w\": 4, \n        \"h\": 6\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"percent\", \n          \"min\": 0, \n          \"max\": 100, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 70\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 90\n              }\n            ]\n          }\n        }\n      }, \n      \"options\": {\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ]\n        }, \n        \"orientation\": \"auto\", \n        \"showThresholdLabels\": false, \n        \"showThresholdMarkers\": true, \n        \"text\": {\n          \"valueSize\": 36\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_FB_USED{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"} / (DCGM_FI_DEV_FB_USED{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"} + DCGM_FI_DEV_FB_FREE{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}) * 100\", \n          \"legendFormat\": \"GPU {{gpu}}\", \n          \"instant\": true\n        }\n      ]\n    }, \n    {\n      \"id\": 73, \n      \"type\": \"gauge\", \n      \"title\": \"전력 소모\", \n      \"gridPos\": {\n        \"x\": 12, \n        \"y\": 0, \n        \"w\": 4, \n        \"h\": 6\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"watt\", \n          \"min\": 0, \n          \"max\": 450, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 300\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 380\n              }\n            ]\n          }\n        }\n      }, \n      \"options\": {\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ]\n        }, \n        \"orientation\": \"auto\", \n        \"showThresholdLabels\": false, \n        \"showThresholdMarkers\": true, \n        \"text\": {\n          \"valueSize\": 36\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_POWER_USAGE{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"GPU {{gpu}}\", \n          \"instant\": true\n        }\n      ]\n    }, \n    {\n      \"id\": 74, \n      \"type\": \"stat\", \n      \"title\": \"XID 에러\", \n      \"gridPos\": {\n        \"x\": 16, \n        \"y\": 0, \n        \"w\": 4, \n        \"h\": 6\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 1\n              }\n            ]\n          }, \n          \"mappings\": []\n        }\n      }, \n      \"options\": {\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ]\n        }, \n        \"colorMode\": \"background\", \n        \"graphMode\": \"none\", \n        \"textMode\": \"auto\", \n        \"text\": {\n          \"valueSize\": 36\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_XID_ERRORS{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"XID\", \n          \"instant\": true\n        }\n      ]\n    }, \n    {\n      \"id\": 75, \n      \"type\": \"stat\", \n      \"title\": \"ECC 에러\", \n      \"gridPos\": {\n        \"x\": 20, \n        \"y\": 0, \n        \"w\": 4, \n        \"h\": 6\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 1\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 1\n              }\n            ]\n          }\n        }, \n        \"overrides\": [\n          {\n            \"matcher\": {\n              \"id\": \"byName\", \n              \"options\": \"DBE\"\n            }, \n            \"properties\": [\n              {\n                \"id\": \"thresholds\", \n                \"value\": {\n                  \"mode\": \"absolute\", \n                  \"steps\": [\n                    {\n                      \"color\": \"green\", \n                      \"value\": null\n                    }, \n                    {\n                      \"color\": \"red\", \n                      \"value\": 1\n                    }\n                  ]\n                }\n              }\n            ]\n          }, \n          {\n            \"matcher\": {\n              \"id\": \"byName\", \n              \"options\": \"SBE\"\n            }, \n            \"properties\": [\n              {\n                \"id\": \"thresholds\", \n                \"value\": {\n                  \"mode\": \"absolute\", \n                  \"steps\": [\n                    {\n                      \"color\": \"green\", \n                      \"value\": null\n                    }, \n                    {\n                      \"color\": \"yellow\", \n                      \"value\": 1\n                    }\n                  ]\n                }\n              }\n            ]\n          }\n        ]\n      }, \n      \"options\": {\n        \"reduceOptions\": {\n          \"calcs\": [\n            \"lastNotNull\"\n          ]\n        }, \n        \"colorMode\": \"background\", \n        \"graphMode\": \"none\", \n        \"textMode\": \"value_and_name\", \n        \"text\": {\n          \"valueSize\": 28\n        }, \n        \"orientation\": \"horizontal\"\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_ECC_SBE_VOL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"SBE\", \n          \"instant\": true\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_ECC_DBE_VOL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"DBE\", \n          \"instant\": true\n        }\n      ]\n    }, \n    {\n      \"id\": 10, \n      \"type\": \"row\", \n      \"title\": \"온도 (NVIDIA 제조사 임계치 적용)\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 6, \n        \"w\": 24, \n        \"h\": 1\n      }, \n      \"collapsed\": false\n    }, \n    {\n      \"id\": 11, \n      \"type\": \"timeseries\", \n      \"title\": \"GPU 온도  ·  임계: 75°C (경고) / 83°C (위험, 열 제한 시작)\", \n      \"description\": \"NVIDIA A100 TJmax=83°C 기준. 83°C 초과 시 thermal throttling 발생.\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 7, \n        \"w\": 8, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"celsius\", \n          \"min\": 0, \n          \"max\": 100, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 75\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 83\n              }\n            ]\n          }, \n          \"custom\": {\n            \"thresholdsStyle\": {\n              \"mode\": \"area\"\n            }, \n            \"lineWidth\": 2, \n            \"fillOpacity\": 15\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"single\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_GPU_TEMP{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"GPU Temp\"\n        }\n      ]\n    }, \n    {\n      \"id\": 12, \n      \"type\": \"timeseries\", \n      \"title\": \"메모리 온도  ·  임계: 85°C (경고) / 95°C (위험, HBM2e 한계)\", \n      \"description\": \"HBM2e 메모리 최대 권장 온도 95°C. A100 SXM 기준.\", \n      \"gridPos\": {\n        \"x\": 8, \n        \"y\": 7, \n        \"w\": 8, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"celsius\", \n          \"min\": 0, \n          \"max\": 110, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 85\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 95\n              }\n            ]\n          }, \n          \"custom\": {\n            \"thresholdsStyle\": {\n              \"mode\": \"area\"\n            }, \n            \"lineWidth\": 2, \n            \"fillOpacity\": 15\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"single\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_MEMORY_TEMP{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Memory Temp\"\n        }\n      ]\n    }, \n    {\n      \"id\": 13, \n      \"type\": \"timeseries\", \n      \"title\": \"팬 속도 (%)  ·  임계: 80% (경고) / 90% (위험)\", \n      \"description\": \"DCGM_FI_DEV_FAN_SPEED. A100/H100 등 패시브 쿨링 GPU는 수집 불가(N/A). 수집 활성화는 scripts/enable-dcgm-fan-speed.sh 참조.\", \n      \"gridPos\": {\n        \"x\": 16, \n        \"y\": 7, \n        \"w\": 8, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"percent\", \n          \"min\": 0, \n          \"max\": 100, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 80\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 90\n              }\n            ]\n          }, \n          \"custom\": {\n            \"thresholdsStyle\": {\n              \"mode\": \"area\"\n            }, \n            \"lineWidth\": 2, \n            \"fillOpacity\": 15\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"single\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_FAN_SPEED{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Fan Speed\"\n        }\n      ]\n    }, \n    {\n      \"id\": 20, \n      \"type\": \"row\", \n      \"title\": \"전력 소모 및 위반\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 15, \n        \"w\": 24, \n        \"h\": 1\n      }, \n      \"collapsed\": false\n    }, \n    {\n      \"id\": 21, \n      \"type\": \"timeseries\", \n      \"title\": \"전력 소모 (W)  ·  임계: 300W (75% TDP) / 380W (95% TDP, A100 400W 기준)\", \n      \"description\": \"NVIDIA A100 SXM TDP=400W 기준. 380W 초과 시 power throttling 위험.\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 16, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"watt\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"yellow\", \n                \"value\": 300\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 380\n              }\n            ]\n          }, \n          \"custom\": {\n            \"thresholdsStyle\": {\n              \"mode\": \"area\"\n            }, \n            \"lineWidth\": 2, \n            \"fillOpacity\": 15\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_POWER_USAGE{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Power Usage\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Power Limit (Enforced)\"\n        }\n      ]\n    }, \n    {\n      \"id\": 22, \n      \"type\": \"timeseries\", \n      \"title\": \"Thermal·Power Violation 누적 시간 (μs)\", \n      \"description\": \"값이 증가할수록 GPU가 throttling 상태였음을 의미. 지속 증가 시 쿨링/전원 점검 필요.\", \n      \"gridPos\": {\n        \"x\": 12, \n        \"y\": 16, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"µs\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 1\n              }\n            ]\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_THERMAL_VIOLATION{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Thermal Violation\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_POWER_VIOLATION{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Power Violation\"\n        }\n      ]\n    }, \n    {\n      \"id\": 30, \n      \"type\": \"row\", \n      \"title\": \"SM · 메모리 클럭 및 사용률\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 24, \n        \"w\": 24, \n        \"h\": 1\n      }, \n      \"collapsed\": false\n    }, \n    {\n      \"id\": 31, \n      \"type\": \"timeseries\", \n      \"title\": \"SM 클럭 · 메모리 클럭 (MHz)\", \n      \"description\": \"클럭 급락은 thermal/power throttling 징후. A100: SM boost ~1410MHz, Mem ~1215MHz.\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 25, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 5\n          }\n        }, \n        \"overrides\": [\n          {\n            \"matcher\": {\n              \"id\": \"byName\", \n              \"options\": \"SM Clock\"\n            }, \n            \"properties\": [\n              {\n                \"id\": \"custom.axisPlacement\", \n                \"value\": \"left\"\n              }, \n              {\n                \"id\": \"color\", \n                \"value\": {\n                  \"fixedColor\": \"blue\", \n                  \"mode\": \"fixed\"\n                }\n              }\n            ]\n          }, \n          {\n            \"matcher\": {\n              \"id\": \"byName\", \n              \"options\": \"Mem Clock\"\n            }, \n            \"properties\": [\n              {\n                \"id\": \"custom.axisPlacement\", \n                \"value\": \"right\"\n              }, \n              {\n                \"id\": \"color\", \n                \"value\": {\n                  \"fixedColor\": \"purple\", \n                  \"mode\": \"fixed\"\n                }\n              }\n            ]\n          }\n        ]\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_SM_CLOCK{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"SM Clock\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_MEM_CLOCK{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Mem Clock\"\n        }\n      ]\n    }, \n    {\n      \"id\": 32, \n      \"type\": \"timeseries\", \n      \"title\": \"GPU 사용률 · 메모리 복사 사용률 (%)\", \n      \"gridPos\": {\n        \"x\": 12, \n        \"y\": 25, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"percent\", \n          \"min\": 0, \n          \"max\": 100, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_GPU_UTIL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"GPU Util\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_MEM_COPY_UTIL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Mem Copy Util\"\n        }\n      ]\n    }, \n    {\n      \"id\": 40, \n      \"type\": \"row\", \n      \"title\": \"Frame Buffer 메모리\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 33, \n        \"w\": 24, \n        \"h\": 1\n      }, \n      \"collapsed\": false\n    }, \n    {\n      \"id\": 41, \n      \"type\": \"timeseries\", \n      \"title\": \"GPU 메모리 사용량 (Used / Free / Total)\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 34, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"decbytes\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_FB_USED{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Used\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_FB_FREE{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Free\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_FB_TOTAL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Total\"\n        }\n      ]\n    }, \n    {\n      \"id\": 42, \n      \"type\": \"timeseries\", \n      \"title\": \"프로세스 수 (Compute / Graphics)\", \n      \"gridPos\": {\n        \"x\": 12, \n        \"y\": 34, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_COMPUTE_PROCESS_COUNT{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Compute Processes\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_GRAPHICS_PROCESS_COUNT{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"Graphics Processes\"\n        }\n      ]\n    }, \n    {\n      \"id\": 50, \n      \"type\": \"row\", \n      \"title\": \"PCIe 처리량 및 오류\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 42, \n        \"w\": 24, \n        \"h\": 1\n      }, \n      \"collapsed\": false\n    }, \n    {\n      \"id\": 51, \n      \"type\": \"timeseries\", \n      \"title\": \"PCIe 처리량 (TX / RX) — KB/s\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 43, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"KBs\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_PCIE_TX_THROUGHPUT{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"PCIe TX\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_PCIE_RX_THROUGHPUT{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"PCIe RX\"\n        }\n      ]\n    }, \n    {\n      \"id\": 52, \n      \"type\": \"timeseries\", \n      \"title\": \"PCIe Replay · NVLink CRC 오류\", \n      \"description\": \"값이 지속 증가하면 PCIe/NVLink 케이블·슬롯 점검 필요.\", \n      \"gridPos\": {\n        \"x\": 12, \n        \"y\": 43, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 1\n              }\n            ]\n          }, \n          \"custom\": {\n            \"thresholdsStyle\": {\n              \"mode\": \"area\"\n            }, \n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"PCIe Replay\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"NVLink CRC Error\"\n        }\n      ]\n    }, \n    {\n      \"id\": 60, \n      \"type\": \"row\", \n      \"title\": \"오류 로그 (XID · ECC)\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 51, \n        \"w\": 24, \n        \"h\": 1\n      }, \n      \"collapsed\": false\n    }, \n    {\n      \"id\": 61, \n      \"type\": \"timeseries\", \n      \"title\": \"XID 에러  ·  임계: 1 이상 = 위험 (드라이버 이벤트 코드)\", \n      \"description\": \"XID 0 이상은 즉시 확인 필요. XID 79=GPU Reset, XID 48=DBE ECC, XID 31=GPU GOM. 지속 발생 시 RMA 고려.\", \n      \"gridPos\": {\n        \"x\": 0, \n        \"y\": 52, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"thresholds\"\n          }, \n          \"thresholds\": {\n            \"mode\": \"absolute\", \n            \"steps\": [\n              {\n                \"color\": \"green\", \n                \"value\": null\n              }, \n              {\n                \"color\": \"red\", \n                \"value\": 1\n              }\n            ]\n          }, \n          \"custom\": {\n            \"thresholdsStyle\": {\n              \"mode\": \"area\"\n            }, \n            \"lineWidth\": 2, \n            \"fillOpacity\": 30\n          }\n        }\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"single\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_XID_ERRORS{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"XID Errors\"\n        }\n      ]\n    }, \n    {\n      \"id\": 62, \n      \"type\": \"timeseries\", \n      \"title\": \"ECC 오류 (SBE · DBE)  ·  DBE 1개 이상 = 즉시 조치\", \n      \"description\": \"SBE(Single-Bit): 자동 수정. DBE(Double-Bit): 수정 불가, 데이터 손상 위험 → 즉각 RMA 신청 권장.\", \n      \"gridPos\": {\n        \"x\": 12, \n        \"y\": 52, \n        \"w\": 12, \n        \"h\": 8\n      }, \n      \"datasource\": {\n        \"type\": \"prometheus\", \n        \"uid\": \"${datasource}\"\n      }, \n      \"fieldConfig\": {\n        \"defaults\": {\n          \"unit\": \"short\", \n          \"min\": 0, \n          \"color\": {\n            \"mode\": \"palette-classic\"\n          }, \n          \"custom\": {\n            \"lineWidth\": 2, \n            \"fillOpacity\": 10\n          }\n        }, \n        \"overrides\": [\n          {\n            \"matcher\": {\n              \"id\": \"byName\", \n              \"options\": \"DBE (수정불가)\"\n            }, \n            \"properties\": [\n              {\n                \"id\": \"thresholds\", \n                \"value\": {\n                  \"mode\": \"absolute\", \n                  \"steps\": [\n                    {\n                      \"color\": \"green\", \n                      \"value\": null\n                    }, \n                    {\n                      \"color\": \"red\", \n                      \"value\": 1\n                    }\n                  ]\n                }\n              }, \n              {\n                \"id\": \"custom.thresholdsStyle\", \n                \"value\": {\n                  \"mode\": \"area\"\n                }\n              }, \n              {\n                \"id\": \"color\", \n                \"value\": {\n                  \"fixedColor\": \"red\", \n                  \"mode\": \"fixed\"\n                }\n              }\n            ]\n          }, \n          {\n            \"matcher\": {\n              \"id\": \"byName\", \n              \"options\": \"SBE (자동수정)\"\n            }, \n            \"properties\": [\n              {\n                \"id\": \"color\", \n                \"value\": {\n                  \"fixedColor\": \"yellow\", \n                  \"mode\": \"fixed\"\n                }\n              }\n            ]\n          }\n        ]\n      }, \n      \"options\": {\n        \"tooltip\": {\n          \"mode\": \"multi\"\n        }, \n        \"legend\": {\n          \"displayMode\": \"list\", \n          \"placement\": \"bottom\"\n        }\n      }, \n      \"targets\": [\n        {\n          \"expr\": \"DCGM_FI_DEV_ECC_SBE_VOL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"SBE (자동수정)\"\n        }, \n        {\n          \"expr\": \"DCGM_FI_DEV_ECC_DBE_VOL{instance=\\\"$node_name\\\", gpu=\\\"$gpu_id\\\"}\", \n          \"legendFormat\": \"DBE (수정불가)\"\n        }\n      ]\n    }\n  ], \n  \"links\": [\n    {\n      \"title\": \"← Node Detail\", \n      \"type\": \"link\", \n      \"url\": \"/d/node_detail?var-datasource=${datasource}&var-node_name=${node_name}&${__url_time_range}\", \n      \"targetBlank\": false, \n      \"icon\": \"arrow-left\", \n      \"tooltip\": \"Node Detail 대시보드로 돌아가기\"\n    }\n  ]\n}"
+  gpu-deep-dive.json: |
+    {
+      "title": "GPU Deep-Dive",
+      "uid": "gpu_detail",
+      "tags": [
+        "gpu",
+        "deep-dive",
+        "dcgm",
+        "precision"
+      ],
+      "timezone": "browser",
+      "schemaVersion": 38,
+      "version": 2,
+      "refresh": "15s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "templating": {
+        "list": [
+          {
+            "name": "datasource",
+            "type": "datasource",
+            "query": "prometheus",
+            "current": {
+              "text": "Thanos",
+              "value": "Thanos"
+            },
+            "hide": 0,
+            "label": "Datasource",
+            "refresh": 1
+          },
+          {
+            "name": "node_name",
+            "type": "query",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "query": "label_values(up{job=\"external-gpu-nodes\"}, instance)",
+            "label": "Node",
+            "multi": false,
+            "includeAll": false,
+            "hide": 0,
+            "refresh": 2,
+            "sort": 1
+          },
+          {
+            "name": "gpu_id",
+            "type": "query",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "query": "label_values(DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\"}, gpu)",
+            "label": "GPU ID",
+            "multi": false,
+            "includeAll": false,
+            "hide": 0,
+            "refresh": 2,
+            "sort": 3
+          }
+        ]
+      },
+      "panels": [
+        {
+          "id": 70,
+          "type": "gauge",
+          "title": "GPU 온도",
+          "gridPos": {
+            "x": 0,
+            "y": 0,
+            "w": 4,
+            "h": 6
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "min": 0,
+              "max": 120,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 75
+                  },
+                  {
+                    "color": "red",
+                    "value": 83
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {
+              "valueSize": 36
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_GPU_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "GPU {{gpu}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 71,
+          "type": "gauge",
+          "title": "GPU 사용률",
+          "gridPos": {
+            "x": 4,
+            "y": 0,
+            "w": 4,
+            "h": 6
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {
+              "valueSize": 36
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "GPU {{gpu}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 72,
+          "type": "gauge",
+          "title": "메모리 사용률",
+          "gridPos": {
+            "x": 8,
+            "y": 0,
+            "w": 4,
+            "h": 6
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {
+              "valueSize": 36
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_FB_USED{instance=\"$node_name\", gpu=\"$gpu_id\"} / (DCGM_FI_DEV_FB_USED{instance=\"$node_name\", gpu=\"$gpu_id\"} + DCGM_FI_DEV_FB_FREE{instance=\"$node_name\", gpu=\"$gpu_id\"}) * 100",
+              "legendFormat": "GPU {{gpu}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 73,
+          "type": "gauge",
+          "title": "전력 소모",
+          "gridPos": {
+            "x": 12,
+            "y": 0,
+            "w": 4,
+            "h": 6
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "watt",
+              "min": 0,
+              "max": 450,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 300
+                  },
+                  {
+                    "color": "red",
+                    "value": 380
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "orientation": "auto",
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {
+              "valueSize": 36
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_POWER_USAGE{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "GPU {{gpu}}",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 74,
+          "type": "stat",
+          "title": "XID 에러",
+          "gridPos": {
+            "x": 16,
+            "y": 0,
+            "w": 4,
+            "h": 6
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              },
+              "mappings": []
+            }
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "auto",
+            "text": {
+              "valueSize": 36
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_XID_ERRORS{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "XID",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 75,
+          "type": "stat",
+          "title": "ECC 에러",
+          "gridPos": {
+            "x": 20,
+            "y": 0,
+            "w": 4,
+            "h": 6
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "DBE"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SBE"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "yellow",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "colorMode": "background",
+            "graphMode": "none",
+            "textMode": "value_and_name",
+            "text": {
+              "valueSize": 28
+            },
+            "orientation": "horizontal"
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_ECC_SBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "SBE",
+              "instant": true
+            },
+            {
+              "expr": "DCGM_FI_DEV_ECC_DBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "DBE",
+              "instant": true
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "type": "row",
+          "title": "온도 (NVIDIA 제조사 임계치 적용)",
+          "gridPos": {
+            "x": 0,
+            "y": 6,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 11,
+          "type": "timeseries",
+          "title": "GPU 온도  ·  임계: 75°C (경고) / 83°C (위험, 열 제한 시작)",
+          "description": "NVIDIA A100 TJmax=83°C 기준. 83°C 초과 시 thermal throttling 발생.",
+          "gridPos": {
+            "x": 0,
+            "y": 7,
+            "w": 8,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 75
+                  },
+                  {
+                    "color": "red",
+                    "value": 83
+                  }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "area"
+                },
+                "lineWidth": 2,
+                "fillOpacity": 15
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "single"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_GPU_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "GPU Temp"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "type": "timeseries",
+          "title": "메모리 온도  ·  임계: 85°C (경고) / 95°C (위험, HBM2e 한계)",
+          "description": "HBM2e 메모리 최대 권장 온도 95°C. A100 SXM 기준.",
+          "gridPos": {
+            "x": 8,
+            "y": 7,
+            "w": 8,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "min": 0,
+              "max": 110,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 85
+                  },
+                  {
+                    "color": "red",
+                    "value": 95
+                  }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "area"
+                },
+                "lineWidth": 2,
+                "fillOpacity": 15
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "single"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_MEMORY_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Memory Temp"
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "type": "timeseries",
+          "title": "팬 속도 (%)  ·  임계: 80% (경고) / 90% (위험)",
+          "description": "DCGM_FI_DEV_FAN_SPEED. A100/H100 등 패시브 쿨링 GPU는 수집 불가(N/A). 수집 활성화는 scripts/enable-dcgm-fan-speed.sh 참조.",
+          "gridPos": {
+            "x": 16,
+            "y": 7,
+            "w": 8,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 80
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "area"
+                },
+                "lineWidth": 2,
+                "fillOpacity": 15
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "single"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_FAN_SPEED{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Fan Speed"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "type": "row",
+          "title": "전력 소모 및 위반",
+          "gridPos": {
+            "x": 0,
+            "y": 15,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 21,
+          "type": "timeseries",
+          "title": "전력 소모 (W)  ·  임계: 300W (75% TDP) / 380W (95% TDP, A100 400W 기준)",
+          "description": "NVIDIA A100 SXM TDP=400W 기준. 380W 초과 시 power throttling 위험.",
+          "gridPos": {
+            "x": 0,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "watt",
+              "min": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 300
+                  },
+                  {
+                    "color": "red",
+                    "value": 380
+                  }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "area"
+                },
+                "lineWidth": 2,
+                "fillOpacity": 15
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_POWER_USAGE{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Power Usage"
+            },
+            {
+              "expr": "DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Power Limit (Enforced)"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "type": "timeseries",
+          "title": "Thermal·Power Violation 누적 시간 (μs)",
+          "description": "값이 증가할수록 GPU가 throttling 상태였음을 의미. 지속 증가 시 쿨링/전원 점검 필요.",
+          "gridPos": {
+            "x": 12,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "µs",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_THERMAL_VIOLATION{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Thermal Violation"
+            },
+            {
+              "expr": "DCGM_FI_DEV_POWER_VIOLATION{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Power Violation"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "type": "row",
+          "title": "SM · 메모리 클럭 및 사용률",
+          "gridPos": {
+            "x": 0,
+            "y": 24,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 31,
+          "type": "timeseries",
+          "title": "SM 클럭 · 메모리 클럭 (MHz)",
+          "description": "클럭 급락은 thermal/power throttling 징후. A100: SM boost ~1410MHz, Mem ~1215MHz.",
+          "gridPos": {
+            "x": 0,
+            "y": 25,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 5
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SM Clock"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "left"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Mem Clock"
+                },
+                "properties": [
+                  {
+                    "id": "custom.axisPlacement",
+                    "value": "right"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_SM_CLOCK{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "SM Clock"
+            },
+            {
+              "expr": "DCGM_FI_DEV_MEM_CLOCK{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Mem Clock"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "type": "timeseries",
+          "title": "GPU 사용률 · 메모리 복사 사용률 (%)",
+          "gridPos": {
+            "x": 12,
+            "y": 25,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "GPU Util"
+            },
+            {
+              "expr": "DCGM_FI_DEV_MEM_COPY_UTIL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Mem Copy Util"
+            }
+          ]
+        },
+        {
+          "id": 40,
+          "type": "row",
+          "title": "Frame Buffer 메모리",
+          "gridPos": {
+            "x": 0,
+            "y": 33,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 41,
+          "type": "timeseries",
+          "title": "GPU 메모리 사용량 (Used / Free / Total)",
+          "gridPos": {
+            "x": 0,
+            "y": 34,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "decbytes",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_FB_USED{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Used"
+            },
+            {
+              "expr": "DCGM_FI_DEV_FB_FREE{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Free"
+            },
+            {
+              "expr": "DCGM_FI_DEV_FB_TOTAL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Total"
+            }
+          ]
+        },
+        {
+          "id": 42,
+          "type": "timeseries",
+          "title": "프로세스 수 (Compute / Graphics)",
+          "gridPos": {
+            "x": 12,
+            "y": 34,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_COMPUTE_PROCESS_COUNT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Compute Processes"
+            },
+            {
+              "expr": "DCGM_FI_DEV_GRAPHICS_PROCESS_COUNT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "Graphics Processes"
+            }
+          ]
+        },
+        {
+          "id": 50,
+          "type": "row",
+          "title": "PCIe 처리량 및 오류",
+          "gridPos": {
+            "x": 0,
+            "y": 42,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 51,
+          "type": "timeseries",
+          "title": "PCIe 처리량 (TX / RX) — KB/s",
+          "gridPos": {
+            "x": 0,
+            "y": 43,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "KBs",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_PCIE_TX_THROUGHPUT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "PCIe TX"
+            },
+            {
+              "expr": "DCGM_FI_DEV_PCIE_RX_THROUGHPUT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "PCIe RX"
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "type": "timeseries",
+          "title": "PCIe Replay · NVLink CRC 오류",
+          "description": "값이 지속 증가하면 PCIe/NVLink 케이블·슬롯 점검 필요.",
+          "gridPos": {
+            "x": 12,
+            "y": 43,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "area"
+                },
+                "lineWidth": 2,
+                "fillOpacity": 10
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "PCIe Replay"
+            },
+            {
+              "expr": "DCGM_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "NVLink CRC Error"
+            }
+          ]
+        },
+        {
+          "id": 60,
+          "type": "row",
+          "title": "오류 로그 (XID · ECC)",
+          "gridPos": {
+            "x": 0,
+            "y": 51,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 61,
+          "type": "timeseries",
+          "title": "XID 에러  ·  임계: 1 이상 = 위험 (드라이버 이벤트 코드)",
+          "description": "XID 0 이상은 즉시 확인 필요. XID 79=GPU Reset, XID 48=DBE ECC, XID 31=GPU GOM. 지속 발생 시 RMA 고려.",
+          "gridPos": {
+            "x": 0,
+            "y": 52,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": {
+                  "mode": "area"
+                },
+                "lineWidth": 2,
+                "fillOpacity": 30
+              }
+            }
+          },
+          "options": {
+            "tooltip": {
+              "mode": "single"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_XID_ERRORS{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "XID Errors"
+            }
+          ]
+        },
+        {
+          "id": 62,
+          "type": "timeseries",
+          "title": "ECC 오류 (SBE · DBE)  ·  DBE 1개 이상 = 즉시 조치",
+          "description": "SBE(Single-Bit): 자동 수정. DBE(Double-Bit): 수정 불가, 데이터 손상 위험 → 즉각 RMA 신청 권장.",
+          "gridPos": {
+            "x": 12,
+            "y": 52,
+            "w": 12,
+            "h": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "lineWidth": 2,
+                "fillOpacity": 10
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "DBE (수정불가)"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.thresholdsStyle",
+                    "value": {
+                      "mode": "area"
+                    }
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "SBE (자동수정)"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "tooltip": {
+              "mode": "multi"
+            },
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            }
+          },
+          "targets": [
+            {
+              "expr": "DCGM_FI_DEV_ECC_SBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "SBE (자동수정)"
+            },
+            {
+              "expr": "DCGM_FI_DEV_ECC_DBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "legendFormat": "DBE (수정불가)"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "title": "← Node Detail",
+          "type": "link",
+          "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${node_name}&${__url_time_range}",
+          "targetBlank": false,
+          "icon": "arrow-left",
+          "tooltip": "Node Detail 대시보드로 돌아가기"
+        }
+      ]
+    }
+
 kind: ConfigMap
 metadata:
   labels:
