@@ -127,6 +127,63 @@ helm upgrade grafana grafana/grafana \
 
 ---
 
+## Phase 4 — 로그 수집 (Loki + Promtail)
+
+| # | 작업 | 상태 | 커밋 | 비고 |
+|---|------|------|------|------|
+| 4.1 | Loki Helm values 작성 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | helm/values/loki.yaml, master3 고정, NodePort 30100 |
+| 4.2 | HAProxy Loki 라우팅 추가 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | VIP:3100 → master3:30100 |
+| 4.3 | Promtail 외부 노드 설정 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | configs/promtail/promtail-external.yaml |
+| 4.4 | Promtail 설치 스크립트 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | scripts/install-promtail-external.sh |
+| 4.5 | Loki 실제 배포 | ⏳ | — | helm install 수동 실행 필요 |
+| 4.6 | 외부 노드 Promtail 배포 | ⏳ | — | 각 GPU 노드에 스크립트 실행 필요 |
+
+### 적용 방법
+
+```bash
+# 1. Loki 설치 (master 노드 중 한 곳에서)
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install loki grafana/loki \
+  -n monitoring \
+  -f helm/values/loki.yaml
+
+# 2. HAProxy 설정 적용 (proxy1, proxy2 각각)
+sudo cp configs/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg   # 문법 검증
+sudo systemctl reload haproxy
+
+# 3. Loki 연결 확인
+curl http://10.10.120.220:3100/ready           # VIP 경유
+curl http://10.10.120.234:30100/ready          # NodePort 직접
+
+# 4. 외부 GPU 노드 Promtail 설치 (각 노드에서)
+sudo bash scripts/install-promtail-external.sh <hostname>
+```
+
+### 트래픽 흐름
+
+```
+외부 GPU 노드 Promtail
+    ↓ http://10.10.120.220:3100/loki/api/v1/push
+VIP(keepalived) → HAProxy(proxy1 or proxy2)
+    ↓ frontend loki-frontend :3100
+    ↓ backend loki-backend
+master3:30100 (NodePort)
+    ↓
+Loki Pod (master3, 10.10.120.234)
+```
+
+### HTTP_PROXY 필요 여부
+
+| 용도 | HTTP_PROXY 필요 |
+|------|----------------|
+| Promtail → Loki(VIP) 로그 전송 | ❌ 내부망 직접 통신 |
+| Promtail 바이너리 다운로드 | 인터넷 차단 환경만 필요 |
+| 인터넷 차단 환경 설정 | `scripts/install-promtail-external.sh` 내 주석 해제 |
+
+---
+
 ## 실행 순서 요약
 
 ```

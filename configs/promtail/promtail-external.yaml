@@ -1,0 +1,56 @@
+# =============================================================================
+# Promtail 설정 — 외부 GPU 노드 (K8s 외부, systemd 서비스로 실행)
+# 배포 위치: 각 외부 GPU 노드 /etc/promtail/config.yaml
+# Loki 접근 경로: Promtail → VIP:3100(HAProxy) → master3:30100(NodePort) → Loki
+# =============================================================================
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+# Loki 푸시 엔드포인트 — VIP를 경유해 NodePort로 전달
+clients:
+  - url: http://10.10.120.220:3100/loki/api/v1/push
+    # HTTP_PROXY 환경변수가 설정된 경우 Promtail이 이를 자동 참조함
+    # 내부망 직접 통신이므로 별도 proxy 설정 불필요
+    tenant_id: ""
+    timeout: 10s
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 10
+
+scrape_configs:
+  # ── 시스템 로그 ─────────────────────────────────────────────────────────────
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: varlogs
+          host: __HOST__          # 설치 시 실제 호스트명으로 교체
+          __path__: /var/log/*.log
+
+  # ── journald (systemd 로그) ──────────────────────────────────────────────────
+  - job_name: journal
+    journal:
+      max_age: 12h
+      labels:
+        job: systemd-journal
+        host: __HOST__            # 설치 시 실제 호스트명으로 교체
+    relabel_configs:
+      - source_labels: [__journal__systemd_unit]
+        target_label: unit
+
+  # ── DCGM Exporter 로그 (GPU 노드 전용) ──────────────────────────────────────
+  - job_name: dcgm-exporter
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: dcgm-exporter
+          host: __HOST__          # 설치 시 실제 호스트명으로 교체
+          __path__: /var/log/dcgm-exporter*.log

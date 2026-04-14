@@ -1,0 +1,87 @@
+# =============================================================================
+# Loki Helm Values — grafana/loki chart (SingleBinary, master3 고정)
+# helm repo add grafana https://grafana.github.io/helm-charts
+# helm install loki grafana/loki -n monitoring -f helm/values/loki.yaml
+# =============================================================================
+
+loki:
+  auth_enabled: false
+
+  commonConfig:
+    replication_factor: 1
+
+  storage:
+    type: filesystem
+
+  schemaConfig:
+    configs:
+      - from: "2024-01-01"
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
+  limits_config:
+    retention_period: 30d
+    ingestion_rate_mb: 16
+    ingestion_burst_size_mb: 32
+
+# SingleBinary 모드 (master3 1대 고정)
+deploymentMode: SingleBinary
+
+singleBinary:
+  replicas: 1
+
+  nodeSelector:
+    kubernetes.io/hostname: k8s-master3
+
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: ""        # 클러스터 기본 StorageClass 사용
+
+  extraEnv: []
+
+# NodePort 서비스 — HAProxy가 30100으로 접근
+service:
+  type: NodePort
+  nodePort: 30100
+  port: 3100
+
+# 분산 컴포넌트 비활성 (SingleBinary이므로)
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+
+# 내장 게이트웨이·Grafana Agent 불필요
+gateway:
+  enabled: false
+
+monitoring:
+  selfMonitoring:
+    enabled: false
+    grafanaAgent:
+      installOperator: false
+  lokiCanary:
+    enabled: false
+
+test:
+  enabled: false
