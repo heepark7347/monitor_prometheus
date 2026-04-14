@@ -310,24 +310,11 @@ data:
                 "properties": [
                   {
                     "id": "custom.displayMode",
-                    "value": "color-background"
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background",
-                      "mode": "solid"
-                    }
+                    "value": "color-text"
                   },
                   {
                     "id": "custom.align",
                     "value": "center"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "thresholds"
-                    }
                   },
                   {
                     "id": "custom.width",
@@ -338,30 +325,12 @@ data:
                     "value": "none"
                   },
                   {
-                    "id": "decimals",
-                    "value": 0
-                  },
-                  {
-                    "id": "min",
-                    "value": 0
-                  },
-                  {
-                    "id": "max",
-                    "value": 1
-                  },
-                  {
                     "id": "thresholds",
                     "value": {
                       "mode": "absolute",
                       "steps": [
-                        {
-                          "color": "red",
-                          "value": null
-                        },
-                        {
-                          "color": "green",
-                          "value": 1
-                        }
+                        {"color": "red", "value": null},
+                        {"color": "green", "value": 1}
                       ]
                     }
                   },
@@ -373,11 +342,7 @@ data:
                         "options": {
                           "from": 0,
                           "to": 0.9,
-                          "result": {
-                            "text": "DOWN",
-                            "color": "red",
-                            "index": 0
-                          }
+                          "result": {"text": "DOWN", "color": "red", "index": 0}
                         }
                       },
                       {
@@ -385,11 +350,7 @@ data:
                         "options": {
                           "from": 1,
                           "to": 1,
-                          "result": {
-                            "text": "UP",
-                            "color": "green",
-                            "index": 1
-                          }
+                          "result": {"text": "UP", "color": "green", "index": 1}
                         }
                       }
                     ]
@@ -438,12 +399,12 @@ data:
                 },
                 "indexByName": {
                   "instance": 0,
-                  "STATUS": 1,
-                  "Value 1": 2,
-                  "Value 2": 3,
-                  "Value 3": 4,
-                  "Value 4": 5,
-                  "Value 5": 6
+                  "Value 1": 1,
+                  "Value 2": 2,
+                  "Value 3": 3,
+                  "Value 4": 4,
+                  "Value 5": 5,
+                  "STATUS": 6
                 },
                 "excludeByName": {
                   "Time": true,
