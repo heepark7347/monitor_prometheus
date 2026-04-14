@@ -309,8 +309,11 @@ data:
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background-solid"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background",
+                      "mode": "solid"
+                    }
                   },
                   {
                     "id": "custom.align",
