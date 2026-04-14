@@ -305,9 +305,13 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "장비 상태"
+                  "options": "Value 6"
                 },
                 "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "장비 상태"
+                  },
                   {
                     "id": "custom.displayMode",
                     "value": "color-background"
@@ -381,7 +385,7 @@ data:
             "showHeader": true,
             "sortBy": [
               {
-                "displayName": "장비 상태",
+                "displayName": "Value 6",
                 "desc": false
               }
             ],
@@ -412,8 +416,7 @@ data:
                   "Value 2": "Memory 사용률",
                   "Value 3": "평균 GPU 사용률",
                   "Value 4": "GPU 메모리 사용률",
-                  "Value 5": "디스크 사용률",
-                  "Value 6": "장비 상태"
+                  "Value 5": "디스크 사용률"
                 },
                 "indexByName": {
                   "instance": 0,
