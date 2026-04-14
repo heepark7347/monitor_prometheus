@@ -131,7 +131,7 @@ data:
                 "lastNotNull"
               ]
             },
-            "colorMode": "background",
+            "colorMode": "value",
             "graphMode": "none",
             "textMode": "auto",
             "text": {
@@ -184,7 +184,7 @@ data:
                 "lastNotNull"
               ]
             },
-            "colorMode": "background",
+            "colorMode": "value",
             "graphMode": "none",
             "textMode": "auto",
             "text": {
@@ -642,7 +642,7 @@ data:
                 "lastNotNull"
               ]
             },
-            "colorMode": "background",
+            "colorMode": "value",
             "graphMode": "none",
             "textMode": "value",
             "text": {
