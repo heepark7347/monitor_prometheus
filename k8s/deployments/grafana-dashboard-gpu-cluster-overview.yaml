@@ -309,10 +309,6 @@ data:
                 },
                 "properties": [
                   {
-                    "id": "displayName",
-                    "value": "장비 상태"
-                  },
-                  {
                     "id": "custom.displayMode",
                     "value": "color-background"
                   },
@@ -437,7 +433,8 @@ data:
                   "Value 2": "Memory 사용률",
                   "Value 3": "평균 GPU 사용률",
                   "Value 4": "GPU 메모리 사용률",
-                  "Value 5": "디스크 사용률"
+                  "Value 5": "디스크 사용률",
+                  "Value 6": "장비 상태"
                 },
                 "indexByName": {
                   "instance": 0,
