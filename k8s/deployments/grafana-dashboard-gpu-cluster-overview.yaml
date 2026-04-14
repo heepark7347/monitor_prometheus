@@ -368,7 +368,7 @@ data:
             "showHeader": true,
             "sortBy": [
               {
-                "displayName": "노드명",
+                "displayName": "노드 상태",
                 "desc": false
               }
             ],
