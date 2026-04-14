@@ -7,7 +7,7 @@
 #
 # 역할:
 #   - HAProxy: k8s API 서버(6443)를 master1/2/3 로 로드밸런싱
-#   - keepalived: VIP(10.10.120.229) VRRP 관리, HAProxy 장애 시 자동 페일오버
+#   - keepalived: VIP(10.10.120.220) VRRP 관리, HAProxy 장애 시 자동 페일오버
 # =============================================================================
 set -euo pipefail
 

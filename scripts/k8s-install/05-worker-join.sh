@@ -28,7 +28,7 @@ echo ""
 
 # join 명령을 환경변수로 주입한다.
 # 방법:
-#   export WORKER_JOIN_CMD="kubeadm join 10.10.120.229:6443 --token ... --discovery-token-ca-cert-hash sha256:..."
+#   export WORKER_JOIN_CMD="kubeadm join 10.10.120.220:6443 --token ... --discovery-token-ca-cert-hash sha256:..."
 #   sudo -E bash 05-worker-join.sh
 WORKER_JOIN_CMD="${WORKER_JOIN_CMD:-}"
 
@@ -36,7 +36,7 @@ if [[ -z "${WORKER_JOIN_CMD}" ]]; then
   echo "ERROR: WORKER_JOIN_CMD 환경변수가 설정되지 않았습니다."
   echo ""
   echo "사용법:"
-  echo "  export WORKER_JOIN_CMD=\"kubeadm join 10.10.120.229:6443 \\"
+  echo "  export WORKER_JOIN_CMD=\"kubeadm join 10.10.120.220:6443 \\"
   echo "    --token <token> \\"
   echo "    --discovery-token-ca-cert-hash sha256:<hash>\""
   echo "  sudo -E bash 05-worker-join.sh"

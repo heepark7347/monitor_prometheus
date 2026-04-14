@@ -5,7 +5,7 @@
 # 실행 방법: sudo bash 03-master1-init.sh
 # 의존성:
 #   - 전 노드: 01-common.sh 완료
-#   - proxy1/proxy2: 02-haproxy-keepalived.sh 완료 (VIP 10.10.120.229 활성 확인)
+#   - proxy1/proxy2: 02-haproxy-keepalived.sh 완료 (VIP 10.10.120.220 활성 확인)
 #
 # 완료 후 출력되는 join 명령어를 안전한 곳에 보관 → 04/05 스크립트에서 사용
 # =============================================================================

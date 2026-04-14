@@ -28,7 +28,7 @@ echo "아래 내용을 k8s-master1 에서 확인하세요:"
 echo "  cat scripts/k8s-install/join-tokens/kubeadm-init-full.log | grep -A 10 'control-plane'"
 echo ""
 echo "형식 예시:"
-echo "  kubeadm join 10.10.120.229:6443 \\"
+echo "  kubeadm join 10.10.120.220:6443 \\"
 echo "    --token <token> \\"
 echo "    --discovery-token-ca-cert-hash sha256:<hash> \\"
 echo "    --control-plane \\"
@@ -38,7 +38,7 @@ echo ""
 # ── 2. join 명령 실행 ─────────────────────────────────────────────────────────
 # join 명령을 환경변수로 주입하거나 직접 입력한다.
 # 방법 A: 환경변수 사용
-#   export CONTROL_PLANE_JOIN_CMD="kubeadm join 10.10.120.229:6443 --token ... --control-plane --certificate-key ..."
+#   export CONTROL_PLANE_JOIN_CMD="kubeadm join 10.10.120.220:6443 --token ... --control-plane --certificate-key ..."
 #   sudo bash 04-master-join.sh
 #
 # 방법 B: 스크립트 안에서 직접 입력 (아래 변수를 채워서 사용)
@@ -48,7 +48,7 @@ if [[ -z "${CONTROL_PLANE_JOIN_CMD}" ]]; then
   echo "ERROR: CONTROL_PLANE_JOIN_CMD 환경변수가 설정되지 않았습니다."
   echo ""
   echo "사용법:"
-  echo "  export CONTROL_PLANE_JOIN_CMD=\"kubeadm join 10.10.120.229:6443 \\"
+  echo "  export CONTROL_PLANE_JOIN_CMD=\"kubeadm join 10.10.120.220:6443 \\"
   echo "    --token <token> \\"
   echo "    --discovery-token-ca-cert-hash sha256:<hash> \\"
   echo "    --control-plane \\"
