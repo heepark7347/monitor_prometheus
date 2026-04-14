@@ -305,7 +305,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "노드 상태"
+                  "options": "장비 상태"
                 },
                 "properties": [
                   {
@@ -368,7 +368,7 @@ data:
             "showHeader": true,
             "sortBy": [
               {
-                "displayName": "노드 상태",
+                "displayName": "장비 상태",
                 "desc": false
               }
             ],
@@ -400,16 +400,16 @@ data:
                   "Value 3": "평균 GPU 사용률",
                   "Value 4": "GPU 메모리 사용률",
                   "Value 5": "디스크 사용률",
-                  "Value 6": "노드 상태"
+                  "Value 6": "장비 상태"
                 },
                 "indexByName": {
                   "instance": 0,
-                  "Value 6": 1,
-                  "Value 1": 2,
-                  "Value 2": 3,
-                  "Value 3": 4,
-                  "Value 4": 5,
-                  "Value 5": 6
+                  "Value 1": 1,
+                  "Value 2": 2,
+                  "Value 3": 3,
+                  "Value 4": 4,
+                  "Value 5": 5,
+                  "Value 6": 6
                 },
                 "excludeByName": {
                   "Time": true,
