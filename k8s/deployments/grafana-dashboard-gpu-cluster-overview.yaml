@@ -310,7 +310,7 @@ data:
                 "properties": [
                   {
                     "id": "custom.displayMode",
-                    "value": "color-text"
+                    "value": "color-background"
                   },
                   {
                     "id": "custom.align",
@@ -404,12 +404,12 @@ data:
                 },
                 "indexByName": {
                   "instance": 0,
-                  "Value 1": 1,
-                  "Value 2": 2,
-                  "Value 3": 3,
-                  "Value 4": 4,
-                  "Value 5": 5,
-                  "Value 6": 6
+                  "Value 6": 1,
+                  "Value 1": 2,
+                  "Value 2": 3,
+                  "Value 3": 4,
+                  "Value 4": 5,
+                  "Value 5": 6
                 },
                 "excludeByName": {
                   "Time": true,
