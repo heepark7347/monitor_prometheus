@@ -310,11 +310,17 @@ data:
                 "properties": [
                   {
                     "id": "custom.displayMode",
-                    "value": "color-background"
+                    "value": "color-background-solid"
                   },
                   {
                     "id": "custom.align",
                     "value": "center"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
                   },
                   {
                     "id": "custom.width",
