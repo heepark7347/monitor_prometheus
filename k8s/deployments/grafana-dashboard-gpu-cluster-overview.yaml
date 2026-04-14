@@ -305,7 +305,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "STATUS"
+                  "options": "Value 6"
                 },
                 "properties": [
                   {
@@ -395,7 +395,7 @@ data:
                   "Value 3": "평균 GPU 사용률",
                   "Value 4": "GPU 메모리 사용률",
                   "Value 5": "디스크 사용률",
-                  "STATUS": "장비 상태"
+                  "Value 6": "장비 상태"
                 },
                 "indexByName": {
                   "instance": 0,
@@ -404,7 +404,7 @@ data:
                   "Value 3": 3,
                   "Value 4": 4,
                   "Value 5": 5,
-                  "STATUS": 6
+                  "Value 6": 6
                 },
                 "excludeByName": {
                   "Time": true,
@@ -414,7 +414,6 @@ data:
                   "Time 4": true,
                   "Time 5": true,
                   "Time 6": true,
-                  "Time 7": true,
                   "job": true,
                   "group": true
                 }
