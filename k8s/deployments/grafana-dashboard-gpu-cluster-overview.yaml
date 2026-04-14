@@ -305,7 +305,7 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "Value 6"
+                  "options": "STATUS"
                 },
                 "properties": [
                   {
@@ -402,7 +402,7 @@ data:
             "showHeader": true,
             "sortBy": [
               {
-                "displayName": "Value 6",
+                "displayName": "장비 상태",
                 "desc": false
               }
             ],
@@ -434,11 +434,11 @@ data:
                   "Value 3": "평균 GPU 사용률",
                   "Value 4": "GPU 메모리 사용률",
                   "Value 5": "디스크 사용률",
-                  "Value 6": "장비 상태"
+                  "STATUS": "장비 상태"
                 },
                 "indexByName": {
                   "instance": 0,
-                  "Value 6": 1,
+                  "STATUS": 1,
                   "Value 1": 2,
                   "Value 2": 3,
                   "Value 3": 4,
@@ -453,6 +453,7 @@ data:
                   "Time 4": true,
                   "Time 5": true,
                   "Time 6": true,
+                  "Time 7": true,
                   "job": true,
                   "group": true
                 }
