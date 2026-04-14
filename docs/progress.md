@@ -135,7 +135,7 @@ helm upgrade grafana grafana/grafana \
 | 4.2 | HAProxy Loki 라우팅 추가 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | VIP:3100 → master3:30100 |
 | 4.3 | Promtail 외부 노드 설정 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | configs/promtail/promtail-external.yaml |
 | 4.4 | Promtail 설치 스크립트 | ✅ | feat(loki): Loki SingleBinary 설치 설정 추가 | scripts/install-promtail-external.sh |
-| 4.5 | Loki 실제 배포 | ⏳ | — | helm install 수동 실행 필요 |
+| 4.5 | Loki 실제 배포 | ✅ | fix(loki): chunksCache/resultsCache 비활성 (docker.io 풀 불가 우회) | loki-0 2/2 Running, /ready 확인 (2026-04-14) |
 | 4.6 | 외부 노드 Promtail 배포 | ⏳ | — | 각 GPU 노드에 스크립트 실행 필요 |
 
 ### 적용 방법
