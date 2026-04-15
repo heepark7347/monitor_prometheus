@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 35,
+  "version": 36,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -564,10 +564,9 @@
             "include": {
               "names": [
                 "Time",
-                "host",
+                "server",
                 "filename",
                 "level",
-                "server",
                 "Line"
               ]
             }
@@ -578,14 +577,14 @@
           "options": {
             "renameByName": {
               "Time": "시간",
-              "host": "서버",
+              "server": "서버",
               "filename": "로그 경로",
               "level": "레벨",
               "Line": "로그 상세"
             },
             "indexByName": {
               "Time": 0,
-              "host": 1,
+              "server": 1,
               "filename": 2,
               "level": 3,
               "Line": 4
@@ -681,7 +680,7 @@
                 "value": [
                   {
                     "title": "Node Detail",
-                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.server}&${__url_time_range}",
+                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.서버}&${__url_time_range}",
                     "targetBlank": false
                   }
                 ]
@@ -837,18 +836,6 @@
               },
               {
                 "id": "custom.wrap",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "server"
-            },
-            "properties": [
-              {
-                "id": "custom.hidden",
                 "value": true
               }
             ]
