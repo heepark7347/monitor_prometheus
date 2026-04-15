@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 13,
+  "version": 14,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -38,6 +38,29 @@
         "hide": 0,
         "label": "Loki",
         "refresh": 1
+      },
+      {
+        "name": "host",
+        "type": "query",
+        "datasource": {
+          "type": "loki",
+          "uid": "${loki_datasource}"
+        },
+        "query": {
+          "label": "host",
+          "refId": "StandardVariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 2,
+        "sort": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": false,
+        "hide": 0,
+        "label": "서버",
+        "options": [],
+        "current": {}
       }
     ]
   },
@@ -499,29 +522,215 @@
     },
     {
       "id": 21,
-      "type": "logs",
+      "type": "table",
       "title": "에러 / 경고 로그 실시간",
-      "description": "GPU 서버 Promtail 수집 로그 중 error/warn/fatal 필터",
+      "description": "GPU 서버 Promtail 수집 로그 중 error/warn/fatal/critical 필터. 상단 '서버' 변수로 특정 호스트 필터링 가능.",
       "gridPos": {
         "x": 0,
         "y": 20,
         "w": 24,
-        "h": 10
+        "h": 12
       },
       "datasource": {
         "type": "loki",
         "uid": "${loki_datasource}"
       },
       "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": true,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": true
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "시간",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
       },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left",
+            "minWidth": 120,
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "시간"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "대상 서버"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "로그 경로"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 200
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "레벨"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background-solid"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "error": {
+                        "text": "ERROR",
+                        "color": "red",
+                        "index": 0
+                      },
+                      "ERROR": {
+                        "text": "ERROR",
+                        "color": "red",
+                        "index": 1
+                      },
+                      "fatal": {
+                        "text": "FATAL",
+                        "color": "dark-red",
+                        "index": 2
+                      },
+                      "FATAL": {
+                        "text": "FATAL",
+                        "color": "dark-red",
+                        "index": 3
+                      },
+                      "critical": {
+                        "text": "CRITICAL",
+                        "color": "dark-red",
+                        "index": 4
+                      },
+                      "CRITICAL": {
+                        "text": "CRITICAL",
+                        "color": "dark-red",
+                        "index": 5
+                      },
+                      "warn": {
+                        "text": "WARN",
+                        "color": "orange",
+                        "index": 6
+                      },
+                      "WARN": {
+                        "text": "WARN",
+                        "color": "orange",
+                        "index": 7
+                      },
+                      "warning": {
+                        "text": "WARN",
+                        "color": "orange",
+                        "index": 8
+                      },
+                      "WARNING": {
+                        "text": "WARN",
+                        "color": "orange",
+                        "index": 9
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "로그 상세"
+            },
+            "properties": [
+              {
+                "id": "custom.wrap",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "Time": "시간",
+              "host": "대상 서버",
+              "filename": "로그 경로",
+              "level": "레벨",
+              "Line": "로그 상세"
+            },
+            "indexByName": {
+              "Time": 0,
+              "host": 1,
+              "filename": 2,
+              "level": 3,
+              "Line": 4
+            },
+            "excludeByName": {
+              "id": true,
+              "job": true,
+              "unit": true,
+              "stream": true,
+              "service_name": true,
+              "pod": true,
+              "tsNs": true
+            }
+          }
+        }
+      ],
       "targets": [
         {
           "refId": "A",
@@ -529,9 +738,10 @@
             "type": "loki",
             "uid": "${loki_datasource}"
           },
-          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\"} |~ \"(?i)(error|fatal|critical|warn)\"",
+          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn)\" | regexp \"(?i)(?P<level>error|warn(?:ing)?|fatal|critical)\"",
+          "queryType": "range",
           "legendFormat": "",
-          "queryType": "range"
+          "maxLines": 200
         }
       ]
     }
