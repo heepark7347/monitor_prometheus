@@ -39,7 +39,7 @@ data:
               "type": "prometheus",
               "uid": "${datasource}"
             },
-            "query": "label_values(up{job=\"external-gpu-nodes\"}, instance)",
+            "query": "label_values(up{job=\\"external-gpu-nodes\\"}, server)",
             "label": "Node",
             "multi": false,
             "includeAll": false,
@@ -54,7 +54,7 @@ data:
               "type": "prometheus",
               "uid": "${datasource}"
             },
-            "query": "label_values(DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\"}, gpu)",
+            "query": "label_values(DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\"}, gpu)",
             "label": "GPU ID",
             "multi": false,
             "includeAll": false,
@@ -121,7 +121,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_GPU_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_GPU_TEMP{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "GPU {{gpu}}",
               "instant": true
             }
@@ -183,7 +183,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "GPU {{gpu}}",
               "instant": true
             }
@@ -245,7 +245,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_FB_USED{instance=\"$node_name\", gpu=\"$gpu_id\"} / (DCGM_FI_DEV_FB_USED{instance=\"$node_name\", gpu=\"$gpu_id\"} + DCGM_FI_DEV_FB_FREE{instance=\"$node_name\", gpu=\"$gpu_id\"}) * 100",
+              "expr": "DCGM_FI_DEV_FB_USED{server=\"$node_name\", gpu=\"$gpu_id\"} / (DCGM_FI_DEV_FB_USED{server=\"$node_name\", gpu=\"$gpu_id\"} + DCGM_FI_DEV_FB_FREE{server=\"$node_name\", gpu=\"$gpu_id\"}) * 100",
               "legendFormat": "GPU {{gpu}}",
               "instant": true
             }
@@ -307,7 +307,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_POWER_USAGE{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_POWER_USAGE{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "GPU {{gpu}}",
               "instant": true
             }
@@ -364,7 +364,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_XID_ERRORS{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_XID_ERRORS{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "XID",
               "instant": true
             }
@@ -475,12 +475,12 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_ECC_SBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_ECC_SBE_VOL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "SBE",
               "instant": true
             },
             {
-              "expr": "DCGM_FI_DEV_ECC_DBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_ECC_DBE_VOL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "DBE",
               "instant": true
             }
@@ -558,7 +558,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_GPU_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_GPU_TEMP{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "GPU Temp"
             }
           ]
@@ -623,7 +623,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_MEMORY_TEMP{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_MEMORY_TEMP{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Memory Temp"
             }
           ]
@@ -688,7 +688,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_FAN_SPEED{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_FAN_SPEED{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Fan Speed"
             }
           ]
@@ -764,11 +764,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_POWER_USAGE{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_POWER_USAGE{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Power Usage"
             },
             {
-              "expr": "DCGM_FI_DEV_ENFORCED_POWER_LIMIT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_ENFORCED_POWER_LIMIT{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Power Limit (Enforced)"
             }
           ]
@@ -825,11 +825,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_THERMAL_VIOLATION{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_THERMAL_VIOLATION{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Thermal Violation"
             },
             {
-              "expr": "DCGM_FI_DEV_POWER_VIOLATION{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_POWER_VIOLATION{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Power Violation"
             }
           ]
@@ -925,11 +925,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_SM_CLOCK{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_SM_CLOCK{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "SM Clock"
             },
             {
-              "expr": "DCGM_FI_DEV_MEM_CLOCK{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_MEM_CLOCK{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Mem Clock"
             }
           ]
@@ -973,11 +973,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_GPU_UTIL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "GPU Util"
             },
             {
-              "expr": "DCGM_FI_DEV_MEM_COPY_UTIL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_MEM_COPY_UTIL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Mem Copy Util"
             }
           ]
@@ -1032,15 +1032,15 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_FB_USED{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_FB_USED{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Used"
             },
             {
-              "expr": "DCGM_FI_DEV_FB_FREE{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_FB_FREE{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Free"
             },
             {
-              "expr": "DCGM_FI_DEV_FB_TOTAL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_FB_TOTAL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Total"
             }
           ]
@@ -1083,11 +1083,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_COMPUTE_PROCESS_COUNT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_COMPUTE_PROCESS_COUNT{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Compute Processes"
             },
             {
-              "expr": "DCGM_FI_DEV_GRAPHICS_PROCESS_COUNT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_GRAPHICS_PROCESS_COUNT{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "Graphics Processes"
             }
           ]
@@ -1142,11 +1142,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_PCIE_TX_THROUGHPUT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_PCIE_TX_THROUGHPUT{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "PCIe TX"
             },
             {
-              "expr": "DCGM_FI_DEV_PCIE_RX_THROUGHPUT{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_PCIE_RX_THROUGHPUT{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "PCIe RX"
             }
           ]
@@ -1206,11 +1206,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_PCIE_REPLAY_COUNTER{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_PCIE_REPLAY_COUNTER{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "PCIe Replay"
             },
             {
-              "expr": "DCGM_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "NVLink CRC Error"
             }
           ]
@@ -1282,7 +1282,7 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_XID_ERRORS{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_XID_ERRORS{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "XID Errors"
             }
           ]
@@ -1380,11 +1380,11 @@ data:
           },
           "targets": [
             {
-              "expr": "DCGM_FI_DEV_ECC_SBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_ECC_SBE_VOL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "SBE (자동수정)"
             },
             {
-              "expr": "DCGM_FI_DEV_ECC_DBE_VOL{instance=\"$node_name\", gpu=\"$gpu_id\"}",
+              "expr": "DCGM_FI_DEV_ECC_DBE_VOL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "DBE (수정불가)"
             }
           ]
