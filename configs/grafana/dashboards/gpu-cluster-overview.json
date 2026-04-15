@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 28,
+  "version": 29,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -542,7 +542,7 @@
             "type": "loki",
             "uid": "${loki_datasource}"
           },
-          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\"",
+          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\" | label_format node_ip=\"{{.instance}}\"",
           "queryType": "range",
           "legendFormat": "",
           "maxLines": 500
@@ -566,7 +566,7 @@
                 "host",
                 "filename",
                 "level",
-                "instance",
+                "node_ip",
                 "Line"
               ]
             }
@@ -581,7 +581,7 @@
               "filename": "로그 경로",
               "level": "레벨",
               "Line": "로그 상세",
-              "instance": "instance"
+              "node_ip": "node_ip"
             },
             "indexByName": {
               "Time": 0,
@@ -589,10 +589,10 @@
               "filename": 2,
               "level": 3,
               "Line": 5,
-              "instance": 4
+              "node_ip": 4
             },
             "excludeByName": {
-              "instance": true
+              "node_ip": true
             }
           }
         }
@@ -684,7 +684,7 @@
                 "value": [
                   {
                     "title": "Node Detail",
-                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.instance}&${__url_time_range}",
+                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.node_ip}&${__url_time_range}",
                     "targetBlank": false
                   }
                 ]
