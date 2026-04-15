@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 15,
+  "version": 16,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -542,7 +542,7 @@
             "type": "loki",
             "uid": "${loki_datasource}"
           },
-          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?i)(?P<level>FATAL|CRITICAL|ERROR|WARN(?:ING)?|ABORT(?:ING)?)\"",
+          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>(?i)fatal|critical|error|warn|warning|abort|aborting)\"",
           "queryType": "range",
           "legendFormat": "",
           "maxLines": 500
@@ -645,7 +645,6 @@
                     "options": {
                       "pattern": "(?i)(fatal|critical|aborting|abort)",
                       "result": {
-                        "text": "${0}",
                         "color": "dark-red",
                         "index": 0
                       }
@@ -654,9 +653,8 @@
                   {
                     "type": "regex",
                     "options": {
-                      "pattern": "(?i)\\berror\\b",
+                      "pattern": "(?i)error",
                       "result": {
-                        "text": "${0}",
                         "color": "red",
                         "index": 1
                       }
@@ -665,9 +663,8 @@
                   {
                     "type": "regex",
                     "options": {
-                      "pattern": "(?i)\\bwarn(?:ing)?\\b",
+                      "pattern": "(?i)warn",
                       "result": {
-                        "text": "${0}",
                         "color": "orange",
                         "index": 2
                       }
