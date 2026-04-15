@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 24,
+  "version": 25,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -596,7 +596,11 @@
           "custom": {
             "align": "left",
             "minWidth": 80,
-            "wrap": false
+            "wrap": true,
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": true
+            }
           },
           "thresholds": {
             "mode": "absolute",
@@ -630,6 +634,17 @@
               {
                 "id": "custom.align",
                 "value": "center"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto",
+                  "wrapText": true
+                }
+              },
+              {
+                "id": "custom.wrap",
+                "value": true
               }
             ]
           },
@@ -646,6 +661,17 @@
               {
                 "id": "custom.align",
                 "value": "center"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto",
+                  "wrapText": true
+                }
+              },
+              {
+                "id": "custom.wrap",
+                "value": true
               }
             ]
           },
@@ -657,7 +683,18 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 210
+                "value": 230
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto",
+                  "wrapText": true
+                }
+              },
+              {
+                "id": "custom.wrap",
+                "value": true
               }
             ]
           },
@@ -674,6 +711,17 @@
               {
                 "id": "custom.align",
                 "value": "center"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background",
+                  "wrapText": true
+                }
+              },
+              {
+                "id": "custom.wrap",
+                "value": true
               },
               {
                 "id": "mappings",
@@ -754,12 +802,6 @@
                     }
                   }
                 ]
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-background"
-                }
               }
             ]
           },
@@ -771,7 +813,7 @@
             "properties": [
               {
                 "id": "custom.minWidth",
-                "value": 300
+                "value": 600
               },
               {
                 "id": "custom.cellOptions",
@@ -799,7 +841,8 @@
         ],
         "footer": {
           "show": false
-        }
+        },
+        "cellHeight": "lg"
       }
     }
   ]
