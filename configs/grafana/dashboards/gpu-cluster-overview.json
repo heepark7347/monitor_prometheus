@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 25,
+  "version": 26,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -73,7 +73,7 @@
         "x": 0,
         "y": 0,
         "w": 4,
-        "h": 4
+        "h": 3
       },
       "datasource": {
         "type": "prometheus",
@@ -129,7 +129,7 @@
         "x": 4,
         "y": 0,
         "w": 4,
-        "h": 4
+        "h": 3
       },
       "datasource": {
         "type": "prometheus",
@@ -189,7 +189,7 @@
         "x": 8,
         "y": 0,
         "w": 4,
-        "h": 4
+        "h": 3
       },
       "datasource": {
         "type": "prometheus",
@@ -239,7 +239,7 @@
       "title": "전체 노드 정보",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 3,
         "w": 24,
         "h": 1
       },
@@ -252,9 +252,9 @@
       "description": "노드명 클릭 시 즉시Node Detail 이동. 주황≥80% / 빨강≥90%",
       "gridPos": {
         "x": 0,
-        "y": 5,
+        "y": 4,
         "w": 24,
-        "h": 14
+        "h": 8
       },
       "datasource": {
         "type": "prometheus",
@@ -514,7 +514,7 @@
       "title": "에러 로그 (GPU 서버)",
       "gridPos": {
         "x": 0,
-        "y": 19,
+        "y": 12,
         "w": 24,
         "h": 1
       },
@@ -527,9 +527,9 @@
       "description": "GPU 서버 Promtail 수집 로그. 상단 '서버' 변수로 특정 호스트 필터링.",
       "gridPos": {
         "x": 0,
-        "y": 20,
+        "y": 13,
         "w": 24,
-        "h": 16
+        "h": 10
       },
       "datasource": {
         "type": "loki",
