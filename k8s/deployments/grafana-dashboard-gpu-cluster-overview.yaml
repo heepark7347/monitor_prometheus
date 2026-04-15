@@ -13,7 +13,7 @@ data:
       ],
       "timezone": "browser",
       "schemaVersion": 38,
-      "version": 12,
+      "version": 31,
       "refresh": "30s",
       "time": {
         "from": "now-1h",
@@ -32,6 +32,38 @@ data:
             "hide": 0,
             "label": "Datasource",
             "refresh": 1
+          },
+          {
+            "name": "loki_datasource",
+            "type": "datasource",
+            "query": "loki",
+            "current": {},
+            "hide": 0,
+            "label": "Loki",
+            "refresh": 1
+          },
+          {
+            "name": "host",
+            "type": "query",
+            "datasource": {
+              "type": "loki",
+              "uid": "${loki_datasource}"
+            },
+            "query": {
+              "label": "host",
+              "refId": "StandardVariableQuery",
+              "stream": "",
+              "type": 1
+            },
+            "refresh": 2,
+            "sort": 1,
+            "includeAll": true,
+            "allValue": ".*",
+            "multi": false,
+            "hide": 0,
+            "label": "서버",
+            "options": [],
+            "current": {}
           }
         ]
       },
@@ -44,7 +76,7 @@ data:
             "x": 0,
             "y": 0,
             "w": 4,
-            "h": 4
+            "h": 3
           },
           "datasource": {
             "type": "prometheus",
@@ -100,7 +132,7 @@ data:
             "x": 4,
             "y": 0,
             "w": 4,
-            "h": 4
+            "h": 3
           },
           "datasource": {
             "type": "prometheus",
@@ -160,7 +192,7 @@ data:
             "x": 8,
             "y": 0,
             "w": 4,
-            "h": 4
+            "h": 3
           },
           "datasource": {
             "type": "prometheus",
@@ -210,7 +242,7 @@ data:
           "title": "전체 노드 정보",
           "gridPos": {
             "x": 0,
-            "y": 4,
+            "y": 3,
             "w": 24,
             "h": 1
           },
@@ -223,9 +255,9 @@ data:
           "description": "노드명 클릭 시 즉시Node Detail 이동. 주황≥80% / 빨강≥90%",
           "gridPos": {
             "x": 0,
-            "y": 5,
+            "y": 4,
             "w": 24,
-            "h": 14
+            "h": 8
           },
           "datasource": {
             "type": "prometheus",
@@ -329,8 +361,14 @@ data:
                     "value": {
                       "mode": "absolute",
                       "steps": [
-                        {"color": "red", "value": null},
-                        {"color": "green", "value": 1}
+                        {
+                          "color": "red",
+                          "value": null
+                        },
+                        {
+                          "color": "green",
+                          "value": 1
+                        }
                       ]
                     }
                   },
@@ -342,7 +380,11 @@ data:
                         "options": {
                           "from": 0,
                           "to": 0.9,
-                          "result": {"text": "DOWN", "color": "red", "index": 0}
+                          "result": {
+                            "text": "DOWN",
+                            "color": "red",
+                            "index": 0
+                          }
                         }
                       },
                       {
@@ -350,7 +392,11 @@ data:
                         "options": {
                           "from": 1,
                           "to": 1,
-                          "result": {"text": "UP", "color": "green", "index": 1}
+                          "result": {
+                            "text": "UP",
+                            "color": "green",
+                            "index": 1
+                          }
                         }
                       }
                     ]
@@ -464,6 +510,357 @@ data:
               "expr": "max by(instance)(label_replace(up{job=\"external-gpu-nodes\"}, \"instance\", \"$1\", \"instance\", \"(.+):[0-9]+\"))"
             }
           ]
+        },
+        {
+          "id": 20,
+          "type": "row",
+          "title": "에러 로그 (GPU 서버)",
+          "gridPos": {
+            "x": 0,
+            "y": 12,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 21,
+          "type": "table",
+          "title": "에러 / 경고 로그 실시간",
+          "description": "GPU 서버 Promtail 수집 로그. 상단 '서버' 변수로 특정 호스트 필터링.",
+          "gridPos": {
+            "x": 0,
+            "y": 13,
+            "w": 24,
+            "h": 10
+          },
+          "datasource": {
+            "type": "loki",
+            "uid": "${loki_datasource}"
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "datasource": {
+                "type": "loki",
+                "uid": "${loki_datasource}"
+              },
+              "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\" | label_format node_ip=\"{{.instance}}\"",
+              "queryType": "range",
+              "legendFormat": "",
+              "maxLines": 500
+            }
+          ],
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "source": "labels",
+                "format": "json",
+                "replace": false
+              }
+            },
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": [
+                    "Time",
+                    "host",
+                    "filename",
+                    "level",
+                    "node_ip",
+                    "Line"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "Time": "시간",
+                  "host": "대상 서버",
+                  "filename": "로그 경로",
+                  "level": "레벨",
+                  "Line": "로그 상세",
+                  "node_ip": "node_ip"
+                },
+                "indexByName": {
+                  "Time": 0,
+                  "host": 1,
+                  "filename": 2,
+                  "level": 3,
+                  "Line": 5,
+                  "node_ip": 4
+                },
+                "excludeByName": {}
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left",
+                "minWidth": 80,
+                "wrap": true,
+                "cellOptions": {
+                  "type": "auto",
+                  "wrapText": true
+                }
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "transparent",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1
+                  },
+                  {
+                    "color": "red",
+                    "value": 2
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "시간"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 175
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto",
+                      "wrapText": true
+                    }
+                  },
+                  {
+                    "id": "custom.wrap",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "대상 서버"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 150
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto",
+                      "wrapText": true
+                    }
+                  },
+                  {
+                    "id": "custom.wrap",
+                    "value": true
+                  },
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "Node Detail",
+                        "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.node_ip}&${__url_time_range}",
+                        "targetBlank": false
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "로그 경로"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 230
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto",
+                      "wrapText": true
+                    }
+                  },
+                  {
+                    "id": "custom.wrap",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "레벨"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 90
+                  },
+                  {
+                    "id": "custom.align",
+                    "value": "center"
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background",
+                      "wrapText": true
+                    }
+                  },
+                  {
+                    "id": "custom.wrap",
+                    "value": true
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "FATAL": {
+                            "text": "FATAL",
+                            "color": "dark-red",
+                            "index": 0
+                          },
+                          "fatal": {
+                            "text": "FATAL",
+                            "color": "dark-red",
+                            "index": 1
+                          },
+                          "CRITICAL": {
+                            "text": "CRITICAL",
+                            "color": "dark-red",
+                            "index": 2
+                          },
+                          "critical": {
+                            "text": "CRITICAL",
+                            "color": "dark-red",
+                            "index": 3
+                          },
+                          "ABORT": {
+                            "text": "ABORT",
+                            "color": "dark-red",
+                            "index": 4
+                          },
+                          "abort": {
+                            "text": "ABORT",
+                            "color": "dark-red",
+                            "index": 5
+                          },
+                          "ABORTING": {
+                            "text": "ABORT",
+                            "color": "dark-red",
+                            "index": 6
+                          },
+                          "aborting": {
+                            "text": "ABORT",
+                            "color": "dark-red",
+                            "index": 7
+                          },
+                          "ERROR": {
+                            "text": "ERROR",
+                            "color": "red",
+                            "index": 8
+                          },
+                          "error": {
+                            "text": "ERROR",
+                            "color": "red",
+                            "index": 9
+                          },
+                          "WARNING": {
+                            "text": "WARN",
+                            "color": "orange",
+                            "index": 10
+                          },
+                          "warning": {
+                            "text": "WARN",
+                            "color": "orange",
+                            "index": 11
+                          },
+                          "WARN": {
+                            "text": "WARN",
+                            "color": "orange",
+                            "index": 12
+                          },
+                          "warn": {
+                            "text": "WARN",
+                            "color": "orange",
+                            "index": 13
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "로그 상세"
+                },
+                "properties": [
+                  {
+                    "id": "custom.minWidth",
+                    "value": 600
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto",
+                      "wrapText": true
+                    }
+                  },
+                  {
+                    "id": "custom.wrap",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "frameIndex": 0,
+            "showHeader": true,
+            "sortBy": [
+              {
+                "displayName": "시간",
+                "desc": true
+              }
+            ],
+            "footer": {
+              "show": false
+            },
+            "cellHeight": "lg"
+          }
         }
       ]
     }
