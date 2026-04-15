@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 33,
+  "version": 34,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -567,6 +567,7 @@
                 "host",
                 "filename",
                 "level",
+                "server",
                 "Line"
               ]
             }
@@ -587,7 +588,8 @@
               "host": 1,
               "filename": 2,
               "level": 3,
-              "Line": 4
+              "Line": 4,
+              "server": 5
             },
             "excludeByName": {}
           }
@@ -680,7 +682,7 @@
                 "value": [
                   {
                     "title": "Node Detail",
-                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.서버}&${__url_time_range}",
+                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.server}&${__url_time_range}",
                     "targetBlank": false
                   }
                 ]
@@ -836,6 +838,18 @@
               },
               {
                 "id": "custom.wrap",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "server"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
                 "value": true
               }
             ]

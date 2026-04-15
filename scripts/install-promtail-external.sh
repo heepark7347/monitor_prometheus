@@ -2,13 +2,15 @@
 # =============================================================================
 # install-promtail-external.sh
 # 외부 GPU 노드에 Promtail을 설치하고 systemd 서비스로 등록하는 스크립트
-# 실행: sudo bash install-promtail-external.sh <HOSTNAME> <INSTANCE_IP>
-# 예시: sudo bash install-promtail-external.sh gpu-node-01 183.111.14.6
+# 실행: sudo bash install-promtail-external.sh <HOSTNAME> <INSTANCE_IP> <SERVER_NAME>
+# 예시: sudo bash install-promtail-external.sh gpu-node-01 183.111.14.6 gpu-server-01
+#   SERVER_NAME: Prometheus server 레이블과 동일한 값 (생략 시 HOSTNAME 사용)
 # =============================================================================
 set -euo pipefail
 
-HOSTNAME="${1:?'사용법: $0 <hostname> <instance_ip> (예: gpu-node-01 183.111.14.6)'}"
-INSTANCE_IP="${2:?'사용법: $0 <hostname> <instance_ip> (예: gpu-node-01 183.111.14.6)'}"
+HOSTNAME="${1:?'사용법: $0 <hostname> <instance_ip> [server_name] (예: gpu-node-01 183.111.14.6 gpu-server-01)'}"
+INSTANCE_IP="${2:?'사용법: $0 <hostname> <instance_ip> [server_name] (예: gpu-node-01 183.111.14.6 gpu-server-01)'}"
+SERVER_NAME="${3:-${HOSTNAME}}"
 
 PROMTAIL_VERSION="3.0.0"
 LOKI_VIP="10.10.120.220"
@@ -43,7 +45,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE="${SCRIPT_DIR}/../configs/promtail/promtail-external.yaml"
 
 if [[ -f "${TEMPLATE}" ]]; then
-  sed "s/__HOST__/${HOSTNAME}/g; s/__INSTANCE__/${INSTANCE_IP}/g" "${TEMPLATE}" > "${CONFIG_DIR}/config.yaml"
+  sed "s/__HOST__/${HOSTNAME}/g; s/__INSTANCE__/${INSTANCE_IP}/g; s/__SERVER__/${SERVER_NAME}/g" "${TEMPLATE}" > "${CONFIG_DIR}/config.yaml"
 else
   # 템플릿 없을 경우 인라인 생성
   cat > "${CONFIG_DIR}/config.yaml" <<EOF
@@ -70,6 +72,7 @@ scrape_configs:
         labels:
           job: varlogs
           host: ${HOSTNAME}
+          server: ${SERVER_NAME}
           __path__: /var/log/*.log
 
   - job_name: journal
@@ -78,6 +81,7 @@ scrape_configs:
       labels:
         job: systemd-journal
         host: ${HOSTNAME}
+        server: ${SERVER_NAME}
     relabel_configs:
       - source_labels: [__journal__systemd_unit]
         target_label: unit
