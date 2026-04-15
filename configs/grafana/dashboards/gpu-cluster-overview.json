@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 29,
+  "version": 30,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -542,7 +542,7 @@
             "type": "loki",
             "uid": "${loki_datasource}"
           },
-          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\" | label_format node_ip=\"{{.instance}}\"",
+          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\"",
           "queryType": "range",
           "legendFormat": "",
           "maxLines": 500
@@ -566,7 +566,7 @@
                 "host",
                 "filename",
                 "level",
-                "node_ip",
+                "instance",
                 "Line"
               ]
             }
@@ -581,7 +581,7 @@
               "filename": "로그 경로",
               "level": "레벨",
               "Line": "로그 상세",
-              "node_ip": "node_ip"
+              "instance": "node_ip"
             },
             "indexByName": {
               "Time": 0,
@@ -589,11 +589,9 @@
               "filename": 2,
               "level": 3,
               "Line": 5,
-              "node_ip": 4
+              "instance": 4
             },
-            "excludeByName": {
-              "node_ip": true
-            }
+            "excludeByName": {}
           }
         }
       ],
