@@ -13,7 +13,7 @@ data:
       ],
       "timezone": "browser",
       "schemaVersion": 38,
-      "version": 32,
+      "version": 33,
       "refresh": "30s",
       "time": {
         "from": "now-1h",
@@ -427,7 +427,7 @@ data:
             {
               "id": "joinByField",
               "options": {
-                "byField": "instance",
+                "byField": "server",
                 "mode": "outer"
               }
             },
@@ -435,7 +435,7 @@ data:
               "id": "organize",
               "options": {
                 "renameByName": {
-                  "instance": "노드명",
+                  "server": "노드명",
                   "Value 1": "CPU 사용률",
                   "Value 2": "Memory 사용률",
                   "Value 3": "평균 GPU 사용률",
@@ -444,7 +444,7 @@ data:
                   "Value 6": "장비 상태"
                 },
                 "indexByName": {
-                  "instance": 0,
+                  "server": 0,
                   "Value 1": 1,
                   "Value 2": 2,
                   "Value 3": 3,
@@ -461,7 +461,8 @@ data:
                   "Time 5": true,
                   "Time 6": true,
                   "job": true,
-                  "group": true
+                  "group": true,
+                  "instance": true
                 }
               }
             }
@@ -472,42 +473,42 @@ data:
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(((1-avg by(instance)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100) OR (avg by(instance)(up{job=\"external-gpu-nodes\"})*0),\"instance\",\"$1\",\"instance\",\"(.+):[0-9]+\")"
+              "expr": "((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100) OR (avg by(server)(up{job=\"external-gpu-nodes\"})*0)"
             },
             {
               "refId": "MEM",
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(avg by(instance)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100,\"instance\",\"$1\",\"instance\",\"(.+):[0-9]+\")"
+              "expr": "avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100"
             },
             {
               "refId": "GPU_UTIL",
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "avg by(instance)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\",instance!~\".+:[0-9]+\"})"
+              "expr": "avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"})"
             },
             {
               "refId": "GPU_MEM",
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "sum by(instance)(DCGM_FI_DEV_FB_USED{group=\"external-gpu\",instance!~\".+:[0-9]+\"})/(sum by(instance)(DCGM_FI_DEV_FB_USED{group=\"external-gpu\",instance!~\".+:[0-9]+\"})+sum by(instance)(DCGM_FI_DEV_FB_FREE{group=\"external-gpu\",instance!~\".+:[0-9]+\"}))*100"
+              "expr": "sum by(server)(DCGM_FI_DEV_FB_USED{group=\"external-gpu\"})/(sum by(server)(DCGM_FI_DEV_FB_USED{group=\"external-gpu\"})+sum by(server)(DCGM_FI_DEV_FB_FREE{group=\"external-gpu\"}))*100"
             },
             {
               "refId": "DISK",
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace((1-sum by(instance)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(instance)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100,\"instance\",\"$1\",\"instance\",\"(.+):[0-9]+\")"
+              "expr": "(1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100"
             },
             {
               "refId": "STATUS",
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "max by(instance)(label_replace(up{job=\"external-gpu-nodes\"}, \"instance\", \"$1\", \"instance\", \"(.+):[0-9]+\"))"
+              "expr": "max by(server)(up{job=\"external-gpu-nodes\"})"
             }
           ]
         },
