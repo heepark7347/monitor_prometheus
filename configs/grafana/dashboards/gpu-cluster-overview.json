@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 37,
+  "version": 38,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -631,11 +631,11 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 100
+                "value": 150
               },
               {
                 "id": "unit",
-                "value": "time:HH:mm:ss"
+                "value": "time:YY-MM-DD HH:mm:ss"
               },
               {
                 "id": "custom.align",
