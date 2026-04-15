@@ -12,7 +12,7 @@ data:
       ],
       "timezone": "browser",
       "schemaVersion": 38,
-      "version": 2,
+      "version": 3,
       "refresh": "30s",
       "time": {
         "from": "now-1h",
@@ -39,7 +39,7 @@ data:
               "type": "prometheus",
               "uid": "${datasource}"
             },
-            "query": "label_values(label_replace(up{job=\"external-gpu-nodes\"}, \"instance\", \"$1\", \"instance\", \"(.+):[0-9]+\"), instance)",
+            "query": "label_values(up{job=\"external-gpu-nodes\"}, server)",
             "label": "Node",
             "multi": false,
             "includeAll": false,
@@ -54,7 +54,7 @@ data:
               "type": "prometheus",
               "uid": "${datasource}"
             },
-            "query": "label_values(DCGM_FI_DEV_GPU_TEMP{instance=~\"${node_name}:.*\"}, gpu)",
+            "query": "label_values(DCGM_FI_DEV_GPU_TEMP{server=\"$node_name\"}, gpu)",
             "label": "GPU ID",
             "multi": true,
             "includeAll": true,
@@ -140,7 +140,7 @@ data:
           },
           "targets": [
             {
-              "expr": "up{job=\"external-gpu-nodes\", instance=~\"${node_name}:.*\"}",
+              "expr": "up{job=\"external-gpu-nodes\", server=\"$node_name\"}",
               "legendFormat": "Status",
               "instant": true
             }
@@ -193,7 +193,7 @@ data:
           },
           "targets": [
             {
-              "expr": "count(DCGM_FI_DEV_GPU_UTIL{instance=~\"${node_name}:.*\"})",
+              "expr": "count(DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\"})",
               "legendFormat": "GPUs",
               "instant": true
             }
@@ -253,7 +253,7 @@ data:
           },
           "targets": [
             {
-              "expr": "avg(DCGM_FI_DEV_GPU_UTIL{instance=~\"${node_name}:.*\"})",
+              "expr": "avg(DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\"})",
               "legendFormat": "GPU Util",
               "instant": true
             }
@@ -313,7 +313,7 @@ data:
           },
           "targets": [
             {
-              "expr": "avg(DCGM_FI_DEV_GPU_TEMP{instance=~\"${node_name}:.*\"})",
+              "expr": "avg(DCGM_FI_DEV_GPU_TEMP{server=\"$node_name\"})",
               "legendFormat": "GPU Temp",
               "instant": true
             }
@@ -373,7 +373,7 @@ data:
           },
           "targets": [
             {
-              "expr": "(1 - avg(rate(node_cpu_seconds_total{instance=~\"${node_name}:.*\", mode=\"idle\"}[$__rate_interval]))) * 100",
+              "expr": "(1 - avg(rate(node_cpu_seconds_total{server=\"$node_name\", mode=\"idle\"}[$__rate_interval]))) * 100",
               "legendFormat": "CPU",
               "instant": true
             }
@@ -433,7 +433,7 @@ data:
           },
           "targets": [
             {
-              "expr": "(1 - node_memory_MemAvailable_bytes{instance=~\"${node_name}:.*\"} / node_memory_MemTotal_bytes{instance=~\"${node_name}:.*\"}) * 100",
+              "expr": "(1 - node_memory_MemAvailable_bytes{server=\"$node_name\"} / node_memory_MemTotal_bytes{server=\"$node_name\"}) * 100",
               "legendFormat": "Memory",
               "instant": true
             }
@@ -493,7 +493,7 @@ data:
           },
           "targets": [
             {
-              "expr": "avg(DCGM_FI_DEV_POWER_USAGE{instance=~\"${node_name}:.*\"})",
+              "expr": "avg(DCGM_FI_DEV_POWER_USAGE{server=\"$node_name\"})",
               "legendFormat": "Power",
               "instant": true
             }
@@ -553,7 +553,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(DCGM_FI_DEV_FB_USED{instance=~\"${node_name}:.*\"}) / (sum(DCGM_FI_DEV_FB_USED{instance=~\"${node_name}:.*\"}) + sum(DCGM_FI_DEV_FB_FREE{instance=~\"${node_name}:.*\"})) * 100",
+              "expr": "sum(DCGM_FI_DEV_FB_USED{server=\"$node_name\"}) / (sum(DCGM_FI_DEV_FB_USED{server=\"$node_name\"}) + sum(DCGM_FI_DEV_FB_FREE{server=\"$node_name\"})) * 100",
               "legendFormat": "GPU Mem %",
               "instant": true
             }
@@ -651,7 +651,7 @@ data:
           },
           "targets": [
             {
-              "expr": "(\n  (DCGM_FI_DEV_GPU_UTIL{instance=~\"${node_name}:.*\"}     < bool 90)\n+ (DCGM_FI_DEV_GPU_TEMP{instance=~\"${node_name}:.*\"}     < bool 83)\n+ (DCGM_FI_DEV_MEMORY_TEMP{instance=~\"${node_name}:.*\"} < bool 95)\n+ (DCGM_FI_DEV_POWER_USAGE{instance=~\"${node_name}:.*\"} < bool 380)\n+ (DCGM_FI_DEV_XID_ERRORS{instance=~\"${node_name}:.*\"} == bool 0)\n)",
+              "expr": "(\n  (DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\"}     < bool 90)\n+ (DCGM_FI_DEV_GPU_TEMP{server=\"$node_name\"}     < bool 83)\n+ (DCGM_FI_DEV_MEMORY_TEMP{server=\"$node_name\"} < bool 95)\n+ (DCGM_FI_DEV_POWER_USAGE{server=\"$node_name\"} < bool 380)\n+ (DCGM_FI_DEV_XID_ERRORS{server=\"$node_name\"} == bool 0)\n)",
               "legendFormat": "",
               "instant": true
             }
@@ -701,7 +701,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "avg(DCGM_FI_DEV_GPU_UTIL{instance=~\"${node_name}:.*\"})",
+              "expr": "avg(DCGM_FI_DEV_GPU_UTIL{server=\"$node_name\"})",
               "legendFormat": "Avg Util"
             }
           ]
@@ -738,7 +738,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "avg(DCGM_FI_DEV_GPU_TEMP{instance=~\"${node_name}:.*\"})",
+              "expr": "avg(DCGM_FI_DEV_GPU_TEMP{server=\"$node_name\"})",
               "legendFormat": "Avg Temp"
             }
           ]
@@ -775,7 +775,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "avg(DCGM_FI_DEV_FB_USED{instance=~\"${node_name}:.*\"}) / (avg(DCGM_FI_DEV_FB_USED{instance=~\"${node_name}:.*\"}) + avg(DCGM_FI_DEV_FB_FREE{instance=~\"${node_name}:.*\"})) * 100",
+              "expr": "avg(DCGM_FI_DEV_FB_USED{server=\"$node_name\"}) / (avg(DCGM_FI_DEV_FB_USED{server=\"$node_name\"}) + avg(DCGM_FI_DEV_FB_FREE{server=\"$node_name\"})) * 100",
               "legendFormat": "Avg Mem Util"
             }
           ]
@@ -812,7 +812,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "avg(DCGM_FI_DEV_POWER_USAGE{instance=~\"${node_name}:.*\"})",
+              "expr": "avg(DCGM_FI_DEV_POWER_USAGE{server=\"$node_name\"})",
               "legendFormat": "Avg Power"
             }
           ]
@@ -860,7 +860,7 @@ data:
           },
           "targets": [
             {
-              "expr": "node_load5{instance=~\"${node_name}:.*\"}",
+              "expr": "node_load5{server=\"$node_name\"}",
               "legendFormat": "Load 5m",
               "refId": "A"
             }
@@ -896,17 +896,17 @@ data:
           },
           "targets": [
             {
-              "expr": "(node_memory_MemTotal_bytes{instance=~\"${node_name}:.*\"} - node_memory_MemAvailable_bytes{instance=~\"${node_name}:.*\"})",
+              "expr": "(node_memory_MemTotal_bytes{server=\"$node_name\"} - node_memory_MemAvailable_bytes{server=\"$node_name\"})",
               "legendFormat": "Used",
               "refId": "A"
             },
             {
-              "expr": "node_memory_MemAvailable_bytes{instance=~\"${node_name}:.*\"}",
+              "expr": "node_memory_MemAvailable_bytes{server=\"$node_name\"}",
               "legendFormat": "Available",
               "refId": "B"
             },
             {
-              "expr": "node_memory_MemTotal_bytes{instance=~\"${node_name}:.*\"}",
+              "expr": "node_memory_MemTotal_bytes{server=\"$node_name\"}",
               "legendFormat": "Total",
               "refId": "C"
             }
@@ -941,7 +941,7 @@ data:
           },
           "targets": [
             {
-              "expr": "(rate(node_network_receive_bytes_total{instance=~\"${node_name}:.*\", device!~\"lo|br-.*|docker.*|veth.*|cni.*\"}[$__rate_interval]) + rate(node_network_transmit_bytes_total{instance=~\"${node_name}:.*\", device!~\"lo|br-.*|docker.*|veth.*|cni.*\"}[$__rate_interval])) * 8",
+              "expr": "(rate(node_network_receive_bytes_total{server=\"$node_name\", device!~\"lo|br-.*|docker.*|veth.*|cni.*\"}[$__rate_interval]) + rate(node_network_transmit_bytes_total{server=\"$node_name\", device!~\"lo|br-.*|docker.*|veth.*|cni.*\"}[$__rate_interval])) * 8",
               "legendFormat": "Total {{device}}",
               "refId": "A"
             }
@@ -978,17 +978,17 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(node_filesystem_size_bytes{instance=~\"${node_name}:.*\", fstype=~\"ext4|xfs|btrfs|vfat\"} - node_filesystem_avail_bytes{instance=~\"${node_name}:.*\", fstype=~\"ext4|xfs|btrfs|vfat\"})",
+              "expr": "sum(node_filesystem_size_bytes{server=\"$node_name\", fstype=~\"ext4|xfs|btrfs|vfat\"} - node_filesystem_avail_bytes{server=\"$node_name\", fstype=~\"ext4|xfs|btrfs|vfat\"})",
               "legendFormat": "Used"
             },
             {
               "refId": "B",
-              "expr": "sum(node_filesystem_avail_bytes{instance=~\"${node_name}:.*\", fstype=~\"ext4|xfs|btrfs|vfat\"})",
+              "expr": "sum(node_filesystem_avail_bytes{server=\"$node_name\", fstype=~\"ext4|xfs|btrfs|vfat\"})",
               "legendFormat": "Available"
             },
             {
               "refId": "C",
-              "expr": "sum(node_filesystem_size_bytes{instance=~\"${node_name}:.*\", fstype=~\"ext4|xfs|btrfs|vfat\"})",
+              "expr": "sum(node_filesystem_size_bytes{server=\"$node_name\", fstype=~\"ext4|xfs|btrfs|vfat\"})",
               "legendFormat": "Total"
             }
           ]

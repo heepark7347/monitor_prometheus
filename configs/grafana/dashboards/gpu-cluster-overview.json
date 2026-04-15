@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 31,
+  "version": 32,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -542,7 +542,7 @@
             "type": "loki",
             "uid": "${loki_datasource}"
           },
-          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\" | label_format node_ip=\"{{.instance}}\"",
+          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?P<level>ERROR|WARN|WARNING|FATAL|CRITICAL|ABORT|ABORTING|error|warn|warning|fatal|critical|abort|aborting)\"",
           "queryType": "range",
           "legendFormat": "",
           "maxLines": 500
@@ -566,7 +566,6 @@
                 "host",
                 "filename",
                 "level",
-                "node_ip",
                 "Line"
               ]
             }
@@ -577,19 +576,17 @@
           "options": {
             "renameByName": {
               "Time": "시간",
-              "host": "대상 서버",
+              "host": "서버",
               "filename": "로그 경로",
               "level": "레벨",
-              "Line": "로그 상세",
-              "node_ip": "node_ip"
+              "Line": "로그 상세"
             },
             "indexByName": {
               "Time": 0,
               "host": 1,
               "filename": 2,
               "level": 3,
-              "Line": 5,
-              "node_ip": 4
+              "Line": 4
             },
             "excludeByName": {}
           }
@@ -655,7 +652,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "대상 서버"
+              "options": "서버"
             },
             "properties": [
               {
@@ -682,7 +679,7 @@
                 "value": [
                   {
                     "title": "Node Detail",
-                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.node_ip}&${__url_time_range}",
+                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.서버}&${__url_time_range}",
                     "targetBlank": false
                   }
                 ]
