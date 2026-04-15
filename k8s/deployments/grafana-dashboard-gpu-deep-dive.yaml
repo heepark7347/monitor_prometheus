@@ -12,7 +12,7 @@ data:
       ],
       "timezone": "browser",
       "schemaVersion": 38,
-      "version": 4,
+      "version": 5,
       "refresh": "15s",
       "time": {
         "from": "now-1h",
@@ -61,6 +61,15 @@ data:
             "hide": 0,
             "refresh": 2,
             "sort": 3
+          },
+          {
+            "name": "loki_datasource",
+            "type": "datasource",
+            "query": "loki",
+            "current": {},
+            "hide": 0,
+            "label": "Loki",
+            "refresh": 1
           }
         ]
       },
@@ -492,7 +501,7 @@ data:
           "title": "온도 (NVIDIA 제조사 임계치 적용)",
           "gridPos": {
             "x": 0,
-            "y": 15,
+            "y": 23,
             "w": 24,
             "h": 1
           },
@@ -505,7 +514,7 @@ data:
           "description": "NVIDIA A100 TJmax=83°C 기준. 83°C 초과 시 thermal throttling 발생.",
           "gridPos": {
             "x": 0,
-            "y": 16,
+            "y": 24,
             "w": 8,
             "h": 8
           },
@@ -570,7 +579,7 @@ data:
           "description": "HBM2e 메모리 최대 권장 온도 95°C. A100 SXM 기준.",
           "gridPos": {
             "x": 8,
-            "y": 16,
+            "y": 24,
             "w": 8,
             "h": 8
           },
@@ -635,7 +644,7 @@ data:
           "description": "DCGM_FI_DEV_FAN_SPEED. A100/H100 등 패시브 쿨링 GPU는 수집 불가(N/A). 수집 활성화는 scripts/enable-dcgm-fan-speed.sh 참조.",
           "gridPos": {
             "x": 16,
-            "y": 16,
+            "y": 24,
             "w": 8,
             "h": 8
           },
@@ -699,7 +708,7 @@ data:
           "title": "전력 소모 및 위반",
           "gridPos": {
             "x": 0,
-            "y": 24,
+            "y": 32,
             "w": 24,
             "h": 1
           },
@@ -712,7 +721,7 @@ data:
           "description": "NVIDIA A100 SXM TDP=400W 기준. 380W 초과 시 power throttling 위험.",
           "gridPos": {
             "x": 0,
-            "y": 25,
+            "y": 33,
             "w": 12,
             "h": 8
           },
@@ -780,7 +789,7 @@ data:
           "description": "값이 증가할수록 GPU가 throttling 상태였음을 의미. 지속 증가 시 쿨링/전원 점검 필요.",
           "gridPos": {
             "x": 12,
-            "y": 25,
+            "y": 33,
             "w": 12,
             "h": 8
           },
@@ -840,7 +849,7 @@ data:
           "title": "SM · 메모리 클럭 및 사용률",
           "gridPos": {
             "x": 0,
-            "y": 33,
+            "y": 41,
             "w": 24,
             "h": 1
           },
@@ -853,7 +862,7 @@ data:
           "description": "클럭 급락은 thermal/power throttling 징후. A100: SM boost ~1410MHz, Mem ~1215MHz.",
           "gridPos": {
             "x": 0,
-            "y": 34,
+            "y": 42,
             "w": 12,
             "h": 8
           },
@@ -940,7 +949,7 @@ data:
           "title": "GPU 사용률 · 메모리 복사 사용률 (%)",
           "gridPos": {
             "x": 12,
-            "y": 34,
+            "y": 42,
             "w": 12,
             "h": 8
           },
@@ -988,7 +997,7 @@ data:
           "title": "Frame Buffer 메모리",
           "gridPos": {
             "x": 0,
-            "y": 42,
+            "y": 50,
             "w": 24,
             "h": 1
           },
@@ -1000,7 +1009,7 @@ data:
           "title": "GPU 메모리 사용량 (Used / Free / Total)",
           "gridPos": {
             "x": 0,
-            "y": 43,
+            "y": 51,
             "w": 12,
             "h": 8
           },
@@ -1051,7 +1060,7 @@ data:
           "title": "프로세스 수 (Compute / Graphics)",
           "gridPos": {
             "x": 12,
-            "y": 43,
+            "y": 51,
             "w": 12,
             "h": 8
           },
@@ -1098,7 +1107,7 @@ data:
           "title": "PCIe 처리량 및 오류",
           "gridPos": {
             "x": 0,
-            "y": 51,
+            "y": 59,
             "w": 24,
             "h": 1
           },
@@ -1110,7 +1119,7 @@ data:
           "title": "PCIe 처리량 (TX / RX) — KB/s",
           "gridPos": {
             "x": 0,
-            "y": 52,
+            "y": 60,
             "w": 12,
             "h": 8
           },
@@ -1158,7 +1167,7 @@ data:
           "description": "값이 지속 증가하면 PCIe/NVLink 케이블·슬롯 점검 필요.",
           "gridPos": {
             "x": 12,
-            "y": 52,
+            "y": 60,
             "w": 12,
             "h": 8
           },
@@ -1386,6 +1395,78 @@ data:
             {
               "expr": "DCGM_FI_DEV_ECC_DBE_VOL{server=\"$node_name\", gpu=\"$gpu_id\"}",
               "legendFormat": "DBE (수정불가)"
+            }
+          ]
+        },
+        {
+          "id": 63,
+          "type": "logs",
+          "title": "XID 에러 로그",
+          "datasource": {
+            "type": "loki",
+            "uid": "${loki_datasource}"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 15,
+            "w": 12,
+            "h": 8
+          },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${loki_datasource}"
+              },
+              "expr": "{server=\"$node_name\"} |~ \"(?i)xid\"",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 64,
+          "type": "logs",
+          "title": "ECC 에러 로그",
+          "datasource": {
+            "type": "loki",
+            "uid": "${loki_datasource}"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 15,
+            "w": 12,
+            "h": 8
+          },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${loki_datasource}"
+              },
+              "expr": "{server=\"$node_name\"} |~ \"(?i)ecc\"",
+              "legendFormat": "",
+              "refId": "A"
             }
           ]
         }
