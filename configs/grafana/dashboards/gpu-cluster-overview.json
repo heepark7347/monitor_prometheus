@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 17,
+  "version": 18,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -524,12 +524,12 @@
       "id": 21,
       "type": "table",
       "title": "에러 / 경고 로그 실시간",
-      "description": "GPU 서버 Promtail 수집 로그. ERROR·Aborting 등 핵심 키워드 포함 시 행 강조. 상단 '서버' 변수로 필터링.",
+      "description": "GPU 서버 Promtail 수집 로그. 상단 '서버' 변수로 특정 호스트 필터링.",
       "gridPos": {
         "x": 0,
         "y": 20,
         "w": 24,
-        "h": 12
+        "h": 14
       },
       "datasource": {
         "type": "loki",
@@ -542,17 +542,55 @@
             "type": "loki",
             "uid": "${loki_datasource}"
           },
-          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\" | regexp \"(?i)(?P<level>fatal|critical|error|warn|warning|abort|aborting)\"",
+          "expr": "{job=~\"varlogs|systemd-journal|dcgm-exporter\", host=~\"${host}\"} |~ \"(?i)(error|fatal|critical|warn|aborting)\"",
           "queryType": "range",
           "legendFormat": "",
           "maxLines": 500
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time",
+                "host",
+                "filename",
+                "Line"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "Time": "시간",
+              "host": "대상 서버",
+              "filename": "로그 경로",
+              "Line": "로그 상세"
+            },
+            "indexByName": {
+              "Time": 0,
+              "host": 1,
+              "filename": 2,
+              "Line": 3
+            }
+          }
         }
       ],
       "fieldConfig": {
         "defaults": {
           "custom": {
             "align": "left",
-            "minWidth": 100,
+            "minWidth": 80,
             "inspect": false,
             "wrap": false
           },
@@ -583,7 +621,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 175
+                "value": 170
               },
               {
                 "id": "custom.align",
@@ -599,7 +637,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 160
+                "value": 150
               },
               {
                 "id": "custom.align",
@@ -615,7 +653,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 220
+                "value": 200
               }
             ]
           },
@@ -643,7 +681,7 @@
                   {
                     "type": "regex",
                     "options": {
-                      "pattern": "(FATAL|Fatal|fatal|CRITICAL|Critical|critical|ABORTING|Aborting|aborting|ABORT|Abort|abort)",
+                      "pattern": "FATAL|Fatal|fatal|CRITICAL|Critical|critical|ABORTING|Aborting|aborting|ABORT|Abort|abort",
                       "result": {
                         "color": "dark-red",
                         "index": 0
@@ -653,7 +691,7 @@
                   {
                     "type": "regex",
                     "options": {
-                      "pattern": "(ERROR|Error|error)",
+                      "pattern": "ERROR|Error|error",
                       "result": {
                         "color": "red",
                         "index": 1
@@ -663,7 +701,7 @@
                   {
                     "type": "regex",
                     "options": {
-                      "pattern": "(WARNING|Warning|warning|WARN|Warn|warn)",
+                      "pattern": "WARNING|Warning|warning|WARN|Warn|warn",
                       "result": {
                         "color": "orange",
                         "index": 2
@@ -676,45 +714,10 @@
           }
         ]
       },
-      "transformations": [
-        {
-          "id": "labelsToFields",
-          "options": {
-            "mode": "columns"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "renameByName": {
-              "Time": "시간",
-              "host": "대상 서버",
-              "filename": "로그 경로",
-              "Line": "로그 상세"
-            },
-            "indexByName": {
-              "Time": 0,
-              "host": 1,
-              "filename": 2,
-              "Line": 3
-            },
-            "excludeByName": {
-              "id": true,
-              "job": true,
-              "unit": true,
-              "stream": true,
-              "service_name": true,
-              "pod": true,
-              "tsNs": true,
-              "level": true,
-              "labels": true
-            }
-          }
-        }
-      ],
       "options": {
         "frameIndex": 0,
         "showHeader": true,
+        "cellHeight": "sm",
         "sortBy": [
           {
             "displayName": "시간",
