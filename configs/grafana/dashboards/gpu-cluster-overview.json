@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 21,
+  "version": 22,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -764,32 +764,23 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Line"
-            },
-            "properties": [
-              {
-                "id": "custom.wrap",
-                "value": true
-              },
-              {
-                "id": "custom.minWidth",
-                "value": 300
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "로그 상세"
             },
             "properties": [
               {
-                "id": "custom.wrap",
-                "value": true
-              },
-              {
                 "id": "custom.minWidth",
                 "value": 300
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto",
+                  "wrapText": true
+                }
+              },
+              {
+                "id": "custom.wrap",
+                "value": true
               }
             ]
           }
