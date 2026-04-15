@@ -12,7 +12,7 @@ data:
       ],
       "timezone": "browser",
       "schemaVersion": 38,
-      "version": 2,
+      "version": 3,
       "refresh": "15s",
       "time": {
         "from": "now-1h",
@@ -39,7 +39,7 @@ data:
               "type": "prometheus",
               "uid": "${datasource}"
             },
-            "query": "label_values(up{job=\\"external-gpu-nodes\\"}, server)",
+            "query": "label_values(up{job=\"external-gpu-nodes\"}, server)",
             "label": "Node",
             "multi": false,
             "includeAll": false,
@@ -1401,7 +1401,6 @@ data:
         }
       ]
     }
-
 kind: ConfigMap
 metadata:
   labels:
