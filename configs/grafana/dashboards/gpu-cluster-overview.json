@@ -10,7 +10,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 27,
+  "version": 28,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -566,6 +566,7 @@
                 "host",
                 "filename",
                 "level",
+                "instance",
                 "Line"
               ]
             }
@@ -579,14 +580,19 @@
               "host": "대상 서버",
               "filename": "로그 경로",
               "level": "레벨",
-              "Line": "로그 상세"
+              "Line": "로그 상세",
+              "instance": "instance"
             },
             "indexByName": {
               "Time": 0,
               "host": 1,
               "filename": 2,
               "level": 3,
-              "Line": 4
+              "Line": 5,
+              "instance": 4
+            },
+            "excludeByName": {
+              "instance": true
             }
           }
         }
@@ -678,7 +684,7 @@
                 "value": [
                   {
                     "title": "Node Detail",
-                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.대상 서버}&${__url_time_range}",
+                    "url": "/d/node_detail?var-datasource=${datasource}&var-node_name=${__data.fields.instance}&${__url_time_range}",
                     "targetBlank": false
                   }
                 ]

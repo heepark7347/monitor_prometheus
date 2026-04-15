@@ -2,12 +2,13 @@
 # =============================================================================
 # install-promtail-external.sh
 # 외부 GPU 노드에 Promtail을 설치하고 systemd 서비스로 등록하는 스크립트
-# 실행: sudo bash install-promtail-external.sh <HOSTNAME>
-# 예시: sudo bash install-promtail-external.sh gpu-node-01
+# 실행: sudo bash install-promtail-external.sh <HOSTNAME> <INSTANCE_IP>
+# 예시: sudo bash install-promtail-external.sh gpu-node-01 183.111.14.6
 # =============================================================================
 set -euo pipefail
 
-HOSTNAME="${1:?'사용법: $0 <hostname> (예: gpu-node-01)'}"
+HOSTNAME="${1:?'사용법: $0 <hostname> <instance_ip> (예: gpu-node-01 183.111.14.6)'}"
+INSTANCE_IP="${2:?'사용법: $0 <hostname> <instance_ip> (예: gpu-node-01 183.111.14.6)'}"
 
 PROMTAIL_VERSION="3.0.0"
 LOKI_VIP="10.10.120.220"
@@ -42,7 +43,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE="${SCRIPT_DIR}/../configs/promtail/promtail-external.yaml"
 
 if [[ -f "${TEMPLATE}" ]]; then
-  sed "s/__HOST__/${HOSTNAME}/g" "${TEMPLATE}" > "${CONFIG_DIR}/config.yaml"
+  sed "s/__HOST__/${HOSTNAME}/g; s/__INSTANCE__/${INSTANCE_IP}/g" "${TEMPLATE}" > "${CONFIG_DIR}/config.yaml"
 else
   # 템플릿 없을 경우 인라인 생성
   cat > "${CONFIG_DIR}/config.yaml" <<EOF
