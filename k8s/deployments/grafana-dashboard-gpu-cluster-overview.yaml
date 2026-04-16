@@ -86,20 +86,8 @@ data:
             "defaults": {
               "unit": "short",
               "color": {
-                "mode": "thresholds"
-              },
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "green",
-                    "value": 1
-                  }
-                ]
+                "mode": "fixed",
+                "fixedColor": "green"
               }
             }
           },
@@ -142,24 +130,8 @@ data:
             "defaults": {
               "unit": "short",
               "color": {
-                "mode": "thresholds"
-              },
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "red",
-                    "value": 2
-                  }
-                ]
+                "mode": "fixed",
+                "fixedColor": "red"
               }
             }
           },
