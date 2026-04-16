@@ -321,7 +321,12 @@ data:
             "defaults": {
               "custom": {
                 "align": "left",
-                "minWidth": 100
+                "minWidth": 100,
+                "wrap": true,
+                "cellOptions": {
+                  "type": "auto",
+                  "wrapText": true
+                }
               }
             },
             "overrides": [
@@ -435,6 +440,13 @@ data:
                   {
                     "id": "custom.wrap",
                     "value": true
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "auto",
+                      "wrapText": true
+                    }
                   }
                 ]
               }
@@ -450,7 +462,8 @@ data:
             ],
             "footer": {
               "show": false
-            }
+            },
+            "cellHeight": "lg"
           }
         },
         {
