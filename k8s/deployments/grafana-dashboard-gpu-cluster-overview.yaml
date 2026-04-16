@@ -81,7 +81,7 @@ data:
         {
           "id": 5,
           "type": "stat",
-          "title": "정상 노드",
+          "title": "Normal",
           "gridPos": { "x": 5, "y": 0, "w": 5, "h": 3 },
           "datasource": { "type": "prometheus", "uid": "${datasource}" },
           "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } } },
@@ -121,7 +121,7 @@ data:
         {
           "id": 10,
           "type": "row",
-          "title": "Error Node 현황",
+          "title": "Error Node Overview",
           "gridPos": {
             "x": 0,
             "y": 3,
@@ -366,8 +366,12 @@ data:
                     "value": "center"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background",
+                      "mode": "basic",
+                      "applyToRow": true
+                    }
                   },
                   {
                     "id": "color",
