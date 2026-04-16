@@ -366,8 +366,11 @@ data:
                     "value": "center"
                   },
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-background"
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background",
+                      "mode": "basic"
+                    }
                   },
                   {
                     "id": "color",
