@@ -336,14 +336,14 @@
           "instant": true,
           "range": false,
           "legendFormat": "",
-          "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}) > 0) * 0 + 1, \"reason\", \"XID Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+          "expr": "label_replace(label_replace((max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) * 0 + 1, \"reason\", \"XID Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
         },
         {
           "refId": "ECC_E",
           "instant": true,
           "range": false,
           "legendFormat": "",
-          "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}) > 0) * 0 + 1, \"reason\", \"ECC DBE Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+          "expr": "label_replace(label_replace((max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) * 0 + 1, \"reason\", \"ECC DBE Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
         },
         {
           "refId": "DOWN_E",

@@ -339,21 +339,22 @@ data:
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}) > 0) * 0 + 1, \"reason\", \"XID Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+              "expr": "label_replace(label_replace((max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) * 0 + 1, \"reason\", \"XID Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
             },
             {
               "refId": "ECC_E",
               "instant": true,
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}) > 0) * 0 + 1, \"reason\", \"ECC DBE Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+              "expr": "label_replace(label_replace((max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) * 0 + 1, \"reason\", \"ECC DBE Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
             },
             {
               "refId": "DOWN_E",
               "instant": true,
+              "format": "table",
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(label_replace((min by(server)(up{job=\"external-gpu-nodes\"}) < 1) * 0 + 1, \"reason\", \"Node Down\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+              "expr": "label_replace(label_replace(((avg by(server)(up{job=\"external-gpu-nodes\"}) * 0) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) * 0)) unless ((up{job=\"external-gpu-nodes\"} == 1) and on(server) (count by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 0)) + 1, \"reason\", \"Service Down\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
             }
           ],
           "transformations": [
@@ -403,21 +404,34 @@ data:
                 "renameByName": {
                   "server": "노드명",
                   "reason (allValues)": "장애 원인",
-                  "reason": "장애 원인",
-                  "sev (max)": "상태",
-                  "sev": "상태"
+                  "sev (max)": "상태"
                 },
                 "indexByName": {
                   "server": 0,
                   "sev (max)": 1,
-                  "sev": 1,
-                  "reason (allValues)": 2,
-                  "reason": 2
+                  "reason (allValues)": 2
                 },
                 "excludeByName": {
                   "Time": true,
                   "Value": true
                 }
+              }
+            },
+            {
+              "id": "filterByValue",
+              "options": {
+                "filters": [
+                  {
+                    "fieldName": "상태", 
+                    "config": {
+                      "id": "greater",
+                      "options": {
+                        "value": 0 // 상태(sev) 값이 0보다 큰(1 또는 2) 경우만 '포함'
+                      }
+                    }
+                  }
+                ],
+                "type": "include" // 위 조건에 맞는 데이터만 테이블에 남김
               }
             }
           ],
