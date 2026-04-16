@@ -426,12 +426,12 @@ data:
                     "config": {
                       "id": "greater",
                       "options": {
-                        "value": 0 // 상태(sev) 값이 0보다 큰(1 또는 2) 경우만 '포함'
+                        "value": 0
                       }
                     }
                   }
                 ],
-                "type": "include" // 위 조건에 맞는 데이터만 테이블에 남김
+                "type": "include"
               }
             }
           ],
