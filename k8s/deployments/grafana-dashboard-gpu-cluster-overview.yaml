@@ -71,142 +71,52 @@ data:
         {
           "id": 1,
           "type": "stat",
-          "title": "활성 노드",
-          "gridPos": {
-            "x": 0,
-            "y": 0,
-            "w": 4,
-            "h": 3
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "green"
-              }
-            }
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "text": {
-              "valueSize": 40
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(up{job=\"external-gpu-nodes\"}) - (count(((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100 > 90) or (avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 90) or ((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100 > 90) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 90) or (max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 83) or (max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) or (max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) or (min by(server)(up{job=\"external-gpu-nodes\"}) < 1)) OR vector(0))",
-              "legendFormat": "Active",
-              "instant": true
-            }
-          ]
+          "title": "Total Node",
+          "gridPos": { "x": 0, "y": 0, "w": 5, "h": 3 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "text" } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none", "textMode": "auto", "text": { "valueSize": 40 } },
+          "targets": [{ "expr": "count(up{job=\"external-gpu-nodes\"}) OR vector(0)", "legendFormat": "Total", "instant": true }]
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "정상 노드",
+          "gridPos": { "x": 5, "y": 0, "w": 5, "h": 3 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "green" } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none", "textMode": "auto", "text": { "valueSize": 40 } },
+          "targets": [{ "expr": "count(up{job=\"external-gpu-nodes\"}) - (count((((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100 > 80) or (avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 80) or ((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})))*100 > 80) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 80) or (max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 75) or (max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) or (max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) or (min by(server)(up{job=\"external-gpu-nodes\"}) < 1)) OR vector(0))", "legendFormat": "Normal", "instant": true }]
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Warning",
+          "gridPos": { "x": 10, "y": 0, "w": 5, "h": 3 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "orange" } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none", "textMode": "auto", "text": { "valueSize": 40 } },
+          "targets": [{ "expr": "count((((((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100) > 80) < 90) or ((((avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100) > 80) < 90) or (((((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})))*100) > 80) < 90) or ((((avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"})) > 80) < 90) or (((max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"})) > 75) < 83))))) unless (((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100 > 90) or (avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 90) or ((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})))*100 > 90) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 90) or (max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 83) or (max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) or (max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) or (min by(server)(up{job=\"external-gpu-nodes\"}) < 1))) OR vector(0)", "legendFormat": "Warning", "instant": true }]
         },
         {
           "id": 2,
           "type": "stat",
-          "title": "장애 노드",
-          "gridPos": {
-            "x": 4,
-            "y": 0,
-            "w": 4,
-            "h": 3
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "red"
-              }
-            }
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "text": {
-              "valueSize": 40
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100 > 90) or (avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 90) or ((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100 > 90) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 90) or (max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 83) or (max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) or (max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) or (min by(server)(up{job=\"external-gpu-nodes\"}) < 1)) OR vector(0)",
-              "legendFormat": "Error",
-              "instant": true
-            }
-          ]
+          "title": "Error",
+          "gridPos": { "x": 15, "y": 0, "w": 5, "h": 3 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "red" } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none", "textMode": "auto", "text": { "valueSize": 40 } },
+          "targets": [{ "expr": "count(((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100 > 90) or (avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 90) or ((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})))*100 > 90) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 90) or (max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 83) or (max by(server)(increase(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}[10m])) > 0) or (max by(server)(increase(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}[10m])) > 0) or (min by(server)(up{job=\"external-gpu-nodes\"}) < 1)) OR vector(0)", "legendFormat": "Error", "instant": true }]
         },
         {
           "id": 3,
           "type": "stat",
-          "title": "전체 GPU 수",
-          "gridPos": {
-            "x": 8,
-            "y": 0,
-            "w": 4,
-            "h": 3
-          },
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "blue"
-              },
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "blue",
-                    "value": null
-                  }
-                ]
-              }
-            }
-          },
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "colorMode": "value",
-            "graphMode": "none",
-            "textMode": "auto",
-            "text": {
-              "valueSize": 40
-            }
-          },
-          "targets": [
-            {
-              "expr": "count(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\",instance!~\".+:[0-9]+\"})",
-              "instant": true
-            }
-          ]
+          "title": "Total GPU",
+          "gridPos": { "x": 20, "y": 0, "w": 4, "h": 3 },
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "blue" } } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none", "textMode": "auto", "text": { "valueSize": 40 } },
+          "targets": [{ "expr": "count(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\",instance!~\".+:[0-9]+\"})", "instant": true }]
         },
         {
           "id": 10,
