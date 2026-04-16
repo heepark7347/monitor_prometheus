@@ -523,12 +523,8 @@
                 "value": "center"
               },
               {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-background",
-                  "mode": "basic",
-                  "applyToRow": true
-                }
+                "id": "custom.displayMode",
+                "value": "color-background"
               },
               {
                 "id": "color",
