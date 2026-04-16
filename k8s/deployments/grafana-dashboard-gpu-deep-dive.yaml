@@ -61,15 +61,6 @@ data:
             "hide": 0,
             "refresh": 2,
             "sort": 3
-          },
-          {
-            "name": "loki_datasource",
-            "type": "datasource",
-            "query": "loki",
-            "current": {},
-            "hide": 0,
-            "label": "Loki",
-            "refresh": 1
           }
         ]
       },
@@ -1398,78 +1389,6 @@ data:
             }
           ]
         },
-        {
-          "id": 63,
-          "type": "logs",
-          "title": "XID 에러 로그",
-          "datasource": {
-            "type": "loki",
-            "uid": "${loki_datasource}"
-          },
-          "gridPos": {
-            "x": 0,
-            "y": 15,
-            "w": 12,
-            "h": 8
-          },
-          "options": {
-            "dedupStrategy": "none",
-            "enableLogDetails": true,
-            "prettifyLogMessage": false,
-            "showCommonLabels": false,
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": true
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "${loki_datasource}"
-              },
-              "expr": "{server=\"$node_name\"} |~ \"(?i)xid\"",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ]
-        },
-        {
-          "id": 64,
-          "type": "logs",
-          "title": "ECC 에러 로그",
-          "datasource": {
-            "type": "loki",
-            "uid": "${loki_datasource}"
-          },
-          "gridPos": {
-            "x": 12,
-            "y": 15,
-            "w": 12,
-            "h": 8
-          },
-          "options": {
-            "dedupStrategy": "none",
-            "enableLogDetails": true,
-            "prettifyLogMessage": false,
-            "showCommonLabels": false,
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": true
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "${loki_datasource}"
-              },
-              "expr": "{server=\"$node_name\"} |~ \"(?i)ecc\"",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ]
-        }
       ],
       "links": [
         {

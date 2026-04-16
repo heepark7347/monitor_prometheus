@@ -12,7 +12,7 @@ data:
       ],
       "timezone": "browser",
       "schemaVersion": 38,
-      "version": 3,
+      "version": 4,
       "refresh": "30s",
       "time": {
         "from": "now-1h",
@@ -66,6 +66,15 @@ data:
             "hide": 2,
             "refresh": 2,
             "sort": 3
+          },
+          {
+            "name": "loki_datasource",
+            "type": "datasource",
+            "query": "loki",
+            "current": {},
+            "hide": 0,
+            "label": "Loki",
+            "refresh": 1
           }
         ]
       },
@@ -658,12 +667,96 @@ data:
           ]
         },
         {
+          "id": 50,
+          "type": "row",
+          "title": "오류 로그 (XID · ECC)",
+          "gridPos": {
+            "x": 0,
+            "y": 9,
+            "w": 24,
+            "h": 1
+          },
+          "collapsed": false
+        },
+        {
+          "id": 51,
+          "type": "logs",
+          "title": "XID 에러 로그",
+          "datasource": {
+            "type": "loki",
+            "uid": "${loki_datasource}"
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 10,
+            "w": 12,
+            "h": 8
+          },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${loki_datasource}"
+              },
+              "expr": "{server=\"$node_name\"} |~ \"(?i)xid\"",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 52,
+          "type": "logs",
+          "title": "ECC 에러 로그",
+          "datasource": {
+            "type": "loki",
+            "uid": "${loki_datasource}"
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 10,
+            "w": 12,
+            "h": 8
+          },
+          "options": {
+            "dedupStrategy": "none",
+            "enableLogDetails": true,
+            "prettifyLogMessage": false,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${loki_datasource}"
+              },
+              "expr": "{server=\"$node_name\"} |~ \"(?i)ecc\"",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ]
+        },
+        {
           "id": 30,
           "type": "row",
           "title": "GPU 시계열",
           "gridPos": {
             "x": 0,
-            "y": 9,
+            "y": 18,
             "w": 24,
             "h": 1
           },
@@ -675,7 +768,7 @@ data:
           "title": "Avg GPU Utilization",
           "gridPos": {
             "x": 0,
-            "y": 10,
+            "y": 19,
             "w": 12,
             "h": 8
           },
@@ -712,7 +805,7 @@ data:
           "title": "Avg GPU Temperature",
           "gridPos": {
             "x": 12,
-            "y": 10,
+            "y": 19,
             "w": 12,
             "h": 8
           },
@@ -749,7 +842,7 @@ data:
           "title": "Avg GPU Memory Utilization",
           "gridPos": {
             "x": 0,
-            "y": 18,
+            "y": 27,
             "w": 12,
             "h": 8
           },
@@ -786,7 +879,7 @@ data:
           "title": "Avg GPU Power",
           "gridPos": {
             "x": 12,
-            "y": 18,
+            "y": 27,
             "w": 12,
             "h": 8
           },
@@ -823,7 +916,7 @@ data:
           "title": "시스템 리소스",
           "gridPos": {
             "x": 0,
-            "y": 26,
+            "y": 35,
             "w": 24,
             "h": 1
           },
@@ -835,7 +928,7 @@ data:
           "title": "CPU Load Average",
           "gridPos": {
             "x": 0,
-            "y": 27,
+            "y": 36,
             "w": 12,
             "h": 8
           },
@@ -872,7 +965,7 @@ data:
           "title": "메모리 사용량",
           "gridPos": {
             "x": 12,
-            "y": 27,
+            "y": 36,
             "w": 12,
             "h": 8
           },
@@ -918,7 +1011,7 @@ data:
           "title": "인터페이스별 트래픽",
           "gridPos": {
             "x": 0,
-            "y": 35,
+            "y": 44,
             "w": 12,
             "h": 8
           },
@@ -953,7 +1046,7 @@ data:
           "title": "Disk 사용량",
           "gridPos": {
             "x": 12,
-            "y": 35,
+            "y": 44,
             "w": 12,
             "h": 8
           },
