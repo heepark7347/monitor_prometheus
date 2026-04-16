@@ -354,7 +354,7 @@ data:
               "format": "table",
               "range": false,
               "legendFormat": "",
-              "expr": "label_replace(label_replace(((avg by(server)(up{job=\"external-gpu-nodes\"}) * 0) or (avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) * 0)) unless ((up{job=\"external-gpu-nodes\"} == 1) and on(server) (count by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 0)) + 1, \"reason\", \"Service Down\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+              "expr": "label_replace(label_replace((min by(server)(up{job=\"external-gpu-nodes\"}) < 1) * 0 + 1, \"reason\", \"Node Down\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
             }
           ],
           "transformations": [
