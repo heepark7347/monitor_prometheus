@@ -708,7 +708,7 @@ data:
                 "type": "loki",
                 "uid": "${loki_datasource}"
               },
-              "expr": "{server=\"$node_name\"} |~ \"(?i)xid\"",
+              "expr": "{server=\"$node_name\"} |~ \"(?i)xid\" | detected_level =~ \"warn|error|critical|fatal\"",
               "legendFormat": "",
               "refId": "A"
             }
@@ -744,7 +744,7 @@ data:
                 "type": "loki",
                 "uid": "${loki_datasource}"
               },
-              "expr": "{server=\"$node_name\"} |~ \"(?i)ecc\"",
+              "expr": "{server=\"$node_name\"} |~ \"(?i)ecc\" | detected_level =~ \"warn|error|critical|fatal\"",
               "legendFormat": "",
               "refId": "A"
             }
