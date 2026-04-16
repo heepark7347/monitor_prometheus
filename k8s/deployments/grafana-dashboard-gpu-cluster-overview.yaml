@@ -239,7 +239,7 @@ data:
         {
           "id": 10,
           "type": "row",
-          "title": "전체 노드 정보",
+          "title": "Error Node 현황",
           "gridPos": {
             "x": 0,
             "y": 3,
@@ -251,8 +251,8 @@ data:
         {
           "id": 11,
           "type": "table",
-          "title": "노드 정보(노드명 클릭 → Node Detail)",
-          "description": "노드명 클릭 시 즉시Node Detail 이동. 주황≥80% / 빨강≥90%",
+          "title": "이상 노드 현황 (정상 노드 자동 제외 · 노드명 클릭 → Node Detail)",
+          "description": "Warning(주황): CPU/Mem/Disk/GPU사용률>80%, GPU온도>75°C | Error(빨강): 각 지표>90%(온도>83°C), XID/ECC 발생, 수집불능. 구분자는 쉼표(Grafana groupBy 제약).",
           "gridPos": {
             "x": 0,
             "y": 4,
@@ -263,36 +263,169 @@ data:
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "percent",
-              "min": 0,
-              "max": 100,
-              "decimals": 1,
-              "color": {
-                "mode": "thresholds"
-              },
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
+          "targets": [
+            {
+              "refId": "CPU_W",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100) > 80) < 90) * 0 + 1, \"reason\", \"CPU High\", \"server\", \".*\"), \"sev\", \"1\", \"server\", \".*\")"
+            },
+            {
+              "refId": "CPU_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100 > 90) * 0 + 1, \"reason\", \"CPU Critical\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "MEM_W",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 80) < 90) * 0 + 1, \"reason\", \"Mem High\", \"server\", \".*\"), \"sev\", \"1\", \"server\", \".*\")"
+            },
+            {
+              "refId": "MEM_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace((avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100 > 90) * 0 + 1, \"reason\", \"Mem Critical\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "DISK_W",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100) > 80) < 90) * 0 + 1, \"reason\", \"Disk High\", \"server\", \".*\"), \"sev\", \"1\", \"server\", \".*\")"
+            },
+            {
+              "refId": "DISK_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100 > 90) * 0 + 1, \"reason\", \"Disk Full\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "GPU_UTIL_W",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 80) < 90) * 0 + 1, \"reason\", \"GPU Util High\", \"server\", \".*\"), \"sev\", \"1\", \"server\", \".*\")"
+            },
+            {
+              "refId": "GPU_UTIL_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace((avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"}) > 90) * 0 + 1, \"reason\", \"GPU Util Critical\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "GPU_TEMP_W",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace(((max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 75) < 83) * 0 + 1, \"reason\", \"GPU Temp High\", \"server\", \".*\"), \"sev\", \"1\", \"server\", \".*\")"
+            },
+            {
+              "refId": "GPU_TEMP_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_GPU_TEMP{group=\"external-gpu\"}) > 83) * 0 + 1, \"reason\", \"GPU Temp Critical\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "XID_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_XID_ERRORS{group=\"external-gpu\"}) > 0) * 0 + 1, \"reason\", \"XID Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "ECC_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace((max by(server)(DCGM_FI_DEV_ECC_DBE_VOL{group=\"external-gpu\"}) > 0) * 0 + 1, \"reason\", \"ECC DBE Error\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            },
+            {
+              "refId": "DOWN_E",
+              "instant": true,
+              "range": false,
+              "legendFormat": "",
+              "expr": "label_replace(label_replace((min by(server)(up{job=\"external-gpu-nodes\"}) < 1) * 0 + 1, \"reason\", \"Node Down\", \"server\", \".*\"), \"sev\", \"2\", \"server\", \".*\")"
+            }
+          ],
+          "transformations": [
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "labelsToFields",
+              "options": {
+                "mode": "columns"
+              }
+            },
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
                   {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "orange",
-                    "value": 80
-                  },
-                  {
-                    "color": "red",
-                    "value": 90
+                    "targetField": "sev",
+                    "destinationType": "number"
                   }
                 ]
-              },
+              }
+            },
+            {
+              "id": "groupBy",
+              "options": {
+                "fields": {
+                  "server": {
+                    "aggregations": [],
+                    "operation": "groupby"
+                  },
+                  "reason": {
+                    "aggregations": ["allValues"],
+                    "operation": "aggregate"
+                  },
+                  "sev": {
+                    "aggregations": ["max"],
+                    "operation": "aggregate"
+                  }
+                }
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "server": "노드명",
+                  "reason (allValues)": "장애 원인",
+                  "reason": "장애 원인",
+                  "sev (max)": "상태",
+                  "sev": "상태"
+                },
+                "indexByName": {
+                  "server": 0,
+                  "sev (max)": 1,
+                  "sev": 1,
+                  "reason (allValues)": 2,
+                  "reason": 2
+                },
+                "excludeByName": {
+                  "Time": true,
+                  "Value": true
+                }
+              }
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
               "custom": {
-                "align": "auto",
-                "displayMode": "gradient-gauge",
-                "minWidth": 150
+                "align": "left",
+                "minWidth": 100
               }
             },
             "overrides": [
@@ -303,24 +436,12 @@ data:
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "auto"
-                  },
-                  {
-                    "id": "custom.align",
-                    "value": "left"
-                  },
-                  {
                     "id": "custom.width",
                     "value": 200
                   },
                   {
                     "id": "custom.pinned",
                     "value": "left"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "string"
                   },
                   {
                     "id": "links",
@@ -337,24 +458,26 @@ data:
               {
                 "matcher": {
                   "id": "byName",
-                  "options": "장비 상태"
+                  "options": "상태"
                 },
                 "properties": [
                   {
-                    "id": "custom.displayMode",
-                    "value": "color-text"
+                    "id": "custom.width",
+                    "value": 100
                   },
                   {
                     "id": "custom.align",
                     "value": "center"
                   },
                   {
-                    "id": "custom.width",
-                    "value": 100
+                    "id": "custom.displayMode",
+                    "value": "color-background"
                   },
                   {
-                    "id": "unit",
-                    "value": "none"
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
                   },
                   {
                     "id": "thresholds",
@@ -362,12 +485,16 @@ data:
                       "mode": "absolute",
                       "steps": [
                         {
-                          "color": "red",
+                          "color": "transparent",
                           "value": null
                         },
                         {
-                          "color": "green",
+                          "color": "orange",
                           "value": 1
+                        },
+                        {
+                          "color": "red",
+                          "value": 2
                         }
                       ]
                     }
@@ -376,30 +503,39 @@ data:
                     "id": "mappings",
                     "value": [
                       {
-                        "type": "range",
+                        "type": "value",
                         "options": {
-                          "from": 0,
-                          "to": 0.9,
-                          "result": {
-                            "text": "DOWN",
-                            "color": "red",
+                          "1": {
+                            "text": "Warning",
                             "index": 0
-                          }
-                        }
-                      },
-                      {
-                        "type": "range",
-                        "options": {
-                          "from": 1,
-                          "to": 1,
-                          "result": {
-                            "text": "UP",
-                            "color": "green",
+                          },
+                          "2": {
+                            "text": "Error",
                             "index": 1
                           }
                         }
                       }
                     ]
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "장애 원인"
+                },
+                "properties": [
+                  {
+                    "id": "custom.minWidth",
+                    "value": 300
+                  },
+                  {
+                    "id": "custom.wrap",
+                    "value": true
                   }
                 ]
               }
@@ -409,108 +545,14 @@ data:
             "showHeader": true,
             "sortBy": [
               {
-                "displayName": "장비 상태",
-                "desc": false
+                "displayName": "상태",
+                "desc": true
               }
             ],
             "footer": {
               "show": false
             }
-          },
-          "transformations": [
-            {
-              "id": "labelsToFields",
-              "options": {
-                "mode": "columns"
-              }
-            },
-            {
-              "id": "joinByField",
-              "options": {
-                "byField": "server",
-                "mode": "outer"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "renameByName": {
-                  "server": "노드명",
-                  "Value 1": "CPU 사용률",
-                  "Value 2": "Memory 사용률",
-                  "Value 3": "평균 GPU 사용률",
-                  "Value 4": "GPU 메모리 사용률",
-                  "Value 5": "디스크 사용률",
-                  "Value 6": "장비 상태"
-                },
-                "indexByName": {
-                  "server": 0,
-                  "Value 1": 1,
-                  "Value 2": 2,
-                  "Value 3": 3,
-                  "Value 4": 4,
-                  "Value 5": 5,
-                  "Value 6": 6
-                },
-                "excludeByName": {
-                  "Time": true,
-                  "Time 1": true,
-                  "Time 2": true,
-                  "Time 3": true,
-                  "Time 4": true,
-                  "Time 5": true,
-                  "Time 6": true,
-                  "job": true,
-                  "group": true,
-                  "instance": true
-                }
-              }
-            }
-          ],
-          "targets": [
-            {
-              "refId": "CPU",
-              "instant": true,
-              "range": false,
-              "legendFormat": "",
-              "expr": "((1-avg by(server)(rate(node_cpu_seconds_total{job=\"external-gpu-nodes\",mode=\"idle\"}[10m])))*100) OR (avg by(server)(up{job=\"external-gpu-nodes\"})*0)"
-            },
-            {
-              "refId": "MEM",
-              "instant": true,
-              "range": false,
-              "legendFormat": "",
-              "expr": "avg by(server)((1-node_memory_MemAvailable_bytes{job=\"external-gpu-nodes\"}/node_memory_MemTotal_bytes{job=\"external-gpu-nodes\"}))*100"
-            },
-            {
-              "refId": "GPU_UTIL",
-              "instant": true,
-              "range": false,
-              "legendFormat": "",
-              "expr": "avg by(server)(DCGM_FI_DEV_GPU_UTIL{group=\"external-gpu\"})"
-            },
-            {
-              "refId": "GPU_MEM",
-              "instant": true,
-              "range": false,
-              "legendFormat": "",
-              "expr": "sum by(server)(DCGM_FI_DEV_FB_USED{group=\"external-gpu\"})/(sum by(server)(DCGM_FI_DEV_FB_USED{group=\"external-gpu\"})+sum by(server)(DCGM_FI_DEV_FB_FREE{group=\"external-gpu\"}))*100"
-            },
-            {
-              "refId": "DISK",
-              "instant": true,
-              "range": false,
-              "legendFormat": "",
-              "expr": "(1-sum by(server)(node_filesystem_avail_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"})/sum by(server)(node_filesystem_size_bytes{job=\"external-gpu-nodes\",fstype=~\"ext4|xfs|btrfs|vfat\"}))*100"
-            },
-            {
-              "refId": "STATUS",
-              "instant": true,
-              "range": false,
-              "legendFormat": "",
-              "expr": "max by(server)(up{job=\"external-gpu-nodes\"})"
-            }
-          ]
+          }
         },
         {
           "id": 20,
